@@ -1,0 +1,104 @@
+
+
+extends ../layout
+
+
+//- block header
+    include includes/header
+
+block content
+
+    .row
+        .columns-12
+            .centered.page-header
+                h1
+                    | Your
+                    br
+                    | Information
+
+    .row
+        .column-10.push-1
+            form(action=".", method="post", autocomplete="off").info-form#contact-onboard-form
+
+
+                .row
+                    .column-8
+                        label
+                            | Is this participant 18 or older?
+
+
+                .row
+                    if contact
+                        .row
+                            .column-2
+                                label
+                                    if contact.meetsAgeRequirements
+                                        input(type="radio", name="meetsAgeRequirements", value="true", checked)
+                                    else 
+                                        input(type="radio", name="meetsAgeRequirements", value="true")
+                                    .age-radio
+                                        | YES
+                            .column-2
+                                label
+                                    if !contact.meetsAgeRequirements
+                                        input(type="radio", name="meetsAgeRequirements", value="false", checked)
+                                    else 
+                                        input(type="radio", name="meetsAgeRequirements", value="false")
+                                    .age-radio
+                                        | NO
+
+                        .row
+                            .column-12
+                                hr
+
+                        
+                        .row
+                            .column-12.parent-guardian-container
+                                if !contact.meetsAgeRequirements
+                                    include includes/under-18
+                                else
+                                    include includes/over-18
+                                    
+
+
+                    else
+                        .row
+                            .column-2
+                                label
+                                    input(type="radio", name="meetsAgeRequirements", value="true", required)
+                                    .age-radio
+                                        | YES
+                            .column-2
+                                label
+                                    input(type="radio", name="meetsAgeRequirements", value="false", required)
+                                    .age-radio
+                                        | NO
+
+                        .row
+                            .column-12
+                                hr
+
+                        .row
+                            .column-12.parent-guardian-container
+
+
+                div(class="row #{(contact) ? '' : 'hidden'} ")
+                    .column-12
+                        .centered.breathe-top.breathe-buttons
+                            if contact
+                                a(href="#{backURL}")
+                                    button(type="button")
+                                        | Cancel
+
+                                input(type="submit", value="update")
+
+                            else
+                                input(type="submit", value="continue")
+
+
+block footer
+    .footer
+        .footer-image
+        .privacy-policy
+            a(href="/privacy-policy").small
+                | Privacy Policy

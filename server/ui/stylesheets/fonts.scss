@@ -1,0 +1,36 @@
+@font-face {
+  font-family: 'BrandonText-Black';
+  src: url('/fonts/BrandonText-Black.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/BrandonText-Black.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/BrandonText-Black.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/BrandonText-Black.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/BrandonText-Black.svg#db8ac6ea225aed8cd72492621348d67d') format('svg'); /* Legacy iOS */
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+
+@font-face {
+  font-family: 'BrandonText-Medium';
+  src: url('/fonts/BrandonText-Medium.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/BrandonText-Medium.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/BrandonText-Medium.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/BrandonText-Medium.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/BrandonText-Medium.svg#df27da1fde6202956c00125747136bda') format('svg'); /* Legacy iOS */
+       
+  font-style:   normal;
+  font-weight:  400;
+}
+
+@font-face {
+  font-family: 'BrandonText-Thin';
+  src: url('/fonts/BrandonText-Thin.eot'); /* IE9 Compat Modes */
+  src: url('/fonts/BrandonText-Thin.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/BrandonText-Thin.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/BrandonText-Thin.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/BrandonText-Thin.svg#bb5e3c0162606114eeab957ba25b4960') format('svg'); /* Legacy iOS */
+       
+  font-style:   normal;
+  font-weight:  200;
+}
+

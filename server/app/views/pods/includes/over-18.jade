@@ -1,0 +1,30 @@
+
+.row
+    .column-5
+        label
+            | Participant First Name
+            input(type="text", name="firstName", value="#{(contact) ? contact.firstName : ''}", required, autocomplete="off")
+    .column-5
+        label
+            | Participant Last Name
+            input(type="text", name="lastName", value="#{(contact) ? contact.lastName : ''}", required, autocomplete="off")
+
+
+.row
+    .column-12
+        p.lead
+            small
+                | Where would you like us to send your video? 
+                span.fade
+                    |  (Optional)
+
+.row
+    .column-5
+        label
+            | Email Address
+            input(type="email", name="email", value="#{(contact) ? (contact.getDecryptedField('email') || '') : ''}",autocomplete="off", data-parsley-maxlength="254")
+    
+    .column-5
+        label
+            | Mobile Number - U.S Numbers Only
+            input(type="text", name="telephone", data-initial-value="#{(contact) ? (contact.getDecryptedField('telephone') || '') : ''}", autocomplete="off", data-parsley-pattern!="\\+?[\\d\\- ]+", data-parsley-trigger="change", data-parsley-error-message="Please enter a valid phone number", data-parsley-length="[14, 14]", data-mask="(###) ###-####", placeholder="(555) 555-5555")

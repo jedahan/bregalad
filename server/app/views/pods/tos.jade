@@ -1,0 +1,107 @@
+extends ../layout
+
+
+//- block header
+    include includes/header
+
+block content
+
+    .row
+        .column-12
+            .centered.page-header
+                h1
+                    | TERMS &
+                    br
+                    | CONDITIONS
+
+    .row
+        .column-10.push-1
+            .terms-of-service
+                p.lead.centered.small
+                    | INFORMED CONSENT: WAIVER & LICENSE
+
+                p
+                    | In consideration for use of the Abbott Laboratories and its affiliates and their respective shareholders, predecessors, successors and assigns, directors, officers, employees, subcontractors, agents, representatives and third party services providers, past and present (collectively, "Abbott") POD (the "POD"), I agree as follows in this Informed Consent, Waiver & License ("Waiver &amp; License"):
+                p
+                    | A.  WAIVER
+
+                    ol
+                        li
+                            | I understand that there are inherent risks in connection with physical exertion and the use of the POD (including, but not limited to, injuries from defective or faulty equipment, injury from slips, falls or accidents, and injuries (including death) arising from other participants’ actions or inactions). In this regard, I acknowledge that I will be using the POD solely at my own risk, and I agree to accept responsibility for any such injuries (including death) sustained in the course of my use of the POD. 
+                        li
+                            | I acknowledge that Abbott recommends that I consult with a physician before starting any physical activity at the POD.  
+                        li
+                            | I acknowledge that there is no supervision or assistance available at any time from Abbott’s staff, and 
+                            span.uppercase
+                                | I agree that ABBOTT shall not be responsible for any medical or other emergency I may suffer while at OR AROUND the POD.  
+                        li
+                            | I acknowledge that the POD is not a medical facility, and Abbott does not review my medical records nor provide any medical advice, and that any instruction or advice I may receive at the POD is not medical in nature.  
+
+                        li
+                            | I hereby agree that I shall have no right to any compensation, royalty, benefit or other remuneration in exchange for my participation in the POD.
+                        li
+                            | I acknowledge that my participation in the POD is completely voluntary, and 
+                            span.uppercase
+                                | I agree to assume all risks of injury, illness, death and damage to or loss of property, including but not limited to those resulting from use of the POD’s equipment AND instructions.
+                        li.uppercase
+                            | I hereby release, discharge and hold harmless, Abbott of and from all liability, claims, losses, and demands (including attorneys’ fees and costs), (“lIABILITY”) arising out of or related to any loss, damage or injury, including death, to my person or property from any cause whatsoever, including negligence or willful misconduct, that may arise from or otherwise be related to my use of THE POD equipment or participation in THE POD. This WAIVER & LICENSE including the release is binding on my heirs, executors, administrators, assigns, agents, attorneys, and representatives. 
+                        li.uppercase
+                            | I further agree to indemnify, defend and hold harmless ABBOTT against any liability arising out of or resulting from any third party claims made or proceedings brought against ABBOTT  to the extent such Liability arises out of or is connected with my PARTICIPATION in the POD.
+
+                p
+                    | B.  LICENSE
+
+                    ol
+                        li
+                            | I acknowledge and agree that I have voluntarily shared my Personal Information (defined below) with Abbott.  “Personal Information” means any information that identifies me or could be used to identify me or which applicable laws and regulations treat as personal information, regardless of the medium in which such information is displayed.  My Personal Information including my name, email, address, telephone number, and any other information about myself I provide Abbott (e.g., medical information, work experience).
+                        li
+                            | I acknowledge and agree that any personal information I provide to Abbott will be collected, recorded, retained, altered, used, disclosed, accessed, transferred and/or destroyed by Abbott and third party service providers.  
+
+                        li
+                            | I hereby agree to grant all worldwide rights, title and interest in and to any content I provide in and associated with the POD, together with all modifications, enhancements and derivative works thereof (the "Content") to Abbott.  This Content includes, but is not limited to, my name, image, likeness, voice, and any performance I provide.  All worldwide rights, title and interest in and to the Content, including copyrights, and any modifications, enhancements or derivative works thereof, are perpetually owned by Abbott.  Abbott may use the Content across all media including without limitation, broadcast (e.g., television, radio, cable, closed-circuit television, satellite television), digital media (e.g., websites, social media sites and channels, Abbott’s internal websites, microsites, mobile applications, email blasts, mobile phone marketing, electronic tablet marketing, and other marketing channels), non-broadcast (e.g., public meetings, digital billboards, transportation, distributors, conventions, internal meetings), print media (e.g., direct marketing, consumer magazines and newspapers, trade magazines and newspapers, retail ads, billboards), public relations (e.g., press kits, media events, press releases, editorials, promotional campaigns), and historical purposes (e.g., archives, educational materials).
+
+                        li
+                            | I hereby agree that I shall have no right to any compensation, royalty, benefit or other remuneration in exchange for my participation in the POD and any collection, storage, modification, enhancement, derivative work or other use of the Content by Abbott.
+
+                        li
+                            | I acknowledge that Abbott may grant me, at Abbott’s sole discretion, a limited, non-exclusive, worldwide, fully-paid-up license to the Content, via a link or in another form as Abbott may determine.  If Abbott elects to grant me this license, I acknowledge that this license may be modified or terminated at Abbott’s sole discretion.
+
+                        li
+                            | I agree that I shall have no right to review, comment, edit, or otherwise alter any of the Content.
+
+                        li
+                            | I agree that I have no right, title or interest in or to Abbott’s name and any Abbott logo, trademark, or service mark ("Abbott Marks"), whether or not added by Abbott to the Content, and that I shall not use any Abbott Mark in any form whatsoever (including but not limited to internet, audio, visual or other form).
+
+                        li
+                            | I agree that I shall not modify, enhance, or create any derivative works based on the Content.  
+
+                        li.uppercase
+                            | I further agree to indemnify, defend and hold ABBOTT harmless against any Liability arising out of or resulting from any third party claims made or proceedings brought against ABBOTT to the extent such Liability arises out of or is connected with (a) MY PERSONAL INFORMATION, INCLUDING THE COLLECTION, RECORDING, RETENTION, ALTERATION, USE, DISCLOSURE, ACCESS, TRANSFER AND/OR DESTRUCTION OF MY PERSONAL INFORMATION AND (b) THE CONTENT, INCLUDING ITS USE IN WHATEVER FORM WHETHER NOW OR HEREINAFTER INVENTED, INCLUDING IN ANY BROADCAST, PRINT, PUBLIC RELATIONS, AND HISTORICAL MEDIA.
+
+
+                p
+                    | Note:  Should any part of this Waiver & License be found by a court of competent jurisdiction to be in violation of applicable laws, regulations or public policy, then such part shall be removed and the remainder shall remain in full force and effect.
+
+
+                p 
+                    | By clicking [ACCEPT] below, I (or my parent or guardian) acknowledge and agree to the terms and conditions set forth in this Waiver & License.  
+
+
+
+
+    .row
+        .column-12
+            .centered.breathe-top-extra
+                if contactIdentifier
+                    form(action="../accept-tos/#{contactIdentifier || ''}", method="post")
+                        each val, key in contact
+                            input(type="hidden", name="#{key}", value="#{val}")
+
+                        input(type="submit", value="Accept")
+
+                else
+                    form(action="./accept-tos/", method="post")
+                        each val, key in contact
+                            input(type="hidden", name="#{key}", value="#{val}")
+
+                        input(type="submit", value="Accept")

@@ -1,0 +1,27 @@
+
+
+extends ../layout
+
+
+//- block header
+    include includes/header
+
+block content
+
+    .row
+        .columns-6.push-3
+            .centered.page-header.breathe-top-extra
+                p.lead
+                    | Looks like you're all set
+
+                h1
+                    | Please return
+                    br
+                    | this iPad to the
+                    br
+                    | Ambassador
+                
+                .breathe-top
+                    a(href="../ambassador-review")
+                        button(type="button")
+                            | Review

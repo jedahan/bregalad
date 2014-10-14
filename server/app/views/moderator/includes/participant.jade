@@ -1,0 +1,19 @@
+
+
+h6
+    | #{participant.firstName} #{participant.lastName}
+
+video.video-js.vjs-default-skin(controls, preload="auto", width="100%", poster="/moderate/participants/#{participant.identifier}/assets/thumbnail")
+    source(src="/moderate/participants/#{participant.identifier}/assets/rendered", type='video/mp4')
+
+if participant.status === 'pending'
+    .row
+        .column-2
+            form(data-parsley-validate, method="post", action="/moderate/participants/#{participant.id}", id="participant-video-#{participant.id}")
+                input(type="hidden", name="status", value="approved")
+                input(type="submit", value="approve").full-width
+        .column-2
+            form(data-parsley-validate, method="post", action="/moderate/participants/#{participant.id}")
+                input(type="hidden", name="status", value="rejected")
+                input(type="submit", value="reject").full-width
+
