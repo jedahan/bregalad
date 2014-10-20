@@ -21,4 +21,10 @@ app.post '/tree', routes.newTree
 #app.get '/participant/:id:', routes.getParticipants
 
 app.listen process.env.PORT or 5000, ->
-  console.log "[#{process.pid}] listening on :#{+@_connectionKey.split(':')[2]}"
+  port = @_connectionKey.split(':')[2]
+  console.log "[#{process.pid}] listening on :#{port}"
+  console.log ""
+  console.log "# uploading a tree:"
+  console.log "http --form :#{port}/tree timestamp=$(date +%s) tree@yo.jpg"
+  console.log "# or"
+  console.log "curl --include localhost:#{port}/tree --form timestamp=$(date +%s) --form tree=@yo.jpg"
