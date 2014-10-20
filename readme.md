@@ -8,7 +8,7 @@ Unity App POST’s image file to **/tree**, and the server will respond with the
 
 ### Get the last N trees
 
-     GET /trees[?num=4][?offset=0]
+     GET /trees[?num=4][&offset=0]
 
 This endpoint is accessed by the iPad app. It returns the "num" most recently created Tree image file paths (default 4 for application/json, 25 for application/html).
 

@@ -30,7 +30,10 @@ newTree = (next) ->
 
 
 getTrees = (next) ->
-  @body = yield dir 'trees'
+  trees = yield dir 'trees'
+  num = +@query['num'] or 4
+  offset = +@query['offset'] or 0
+  @body = trees.reverse()[offset...offset+num]
   yield next
 
 module.exports = {newTree, getTrees}
