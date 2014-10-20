@@ -4,7 +4,7 @@
 
     POST /tree?timestamp={timestamp}
 
-Unity App POST’s image file to **/tree**, and the server will respond with the file path to the image, which can then be retrieved via http. The filename of the image will be **$timestamp**.jpg
+Unity App POST’s image file to **/tree**, and the server will respond with the file path to the image, which can then be retrieved via http. The filename of the image will be **$timestamp**.jpg, and the image should be market in a form field called **image**.
 
 ### Get the last N trees
 

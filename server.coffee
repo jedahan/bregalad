@@ -24,6 +24,6 @@ app.listen process.env.PORT or 5000, ->
   console.log "[#{process.pid}] listening on :#{port}"
   console.log ""
   console.log "# uploading a tree:"
-  console.log "http --form :#{port}/tree timestamp=$(date +%s) tree@yo.jpg"
+  console.log "http --form :#{port}/tree timestamp=$(date +%s) image@yo.jpg"
   console.log "# or"
-  console.log "curl --include localhost:#{port}/tree --form timestamp=$(date +%s) --form tree=@yo.jpg"
+  console.log "curl --include localhost:#{port}/tree --form timestamp=$(date +%s) --form image=@yo.jpg"
