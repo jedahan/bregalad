@@ -2,23 +2,22 @@ koa = require 'koa'
 time = require 'koa-response-time'
 logger = require 'koa-logger'
 router = require 'koa-router'
+body = require 'koa-better-body'
+send = require 'koa-send'
 
 routes = require './routes.coffee'
-console.log routes.newTree
+treepath = __dirname + '/trees'
 
 app = koa()
-
 app.use time()
 app.use logger()
 app.use router(app)
-app.get '/test', (next) ->
-  @body = "test complete"
-  yield next
-app.post '/tree', routes.newTree
-#app.get '/trees', routes.getTrees
-#app.post '/participant', routes.newParticipant
-#app.get '/participants', routes.getParticipants
-#app.get '/participant/:id:', routes.getParticipants
+
+app.post '/tree', body({multipart: true, formidable: {uploadDir: treepath}}), routes.newTree
+app.get '/trees', routes.getTrees
+# /trees/#{unix-epoch-timestamp}.jpg
+app.get /^\/trees\/\d{10}.jpg$/, ->
+  yield send @, @params['timestamp']+'.jpg', root: treepath
 
 app.listen process.env.PORT or 5000, ->
   port = @_connectionKey.split(':')[2]
