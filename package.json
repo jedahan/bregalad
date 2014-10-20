@@ -1,0 +1,32 @@
+{
+  "name": "umpqua",
+  "homepage": "http://fakelove.tv",
+  "bugs": "http://github.com/jedahan/bregalad/issues",
+  "contributors": [
+    "Jonathan Dahan"
+  ],
+  "licenses": [
+    "ISC"
+  ],
+  "version": "0.0.1",
+  "description": "backend image/email services",
+  "author": "Jonathan Dahan <jonathan@jonathan.is>",
+  "dependencies": {
+    "coffee-script": "git://github.com/jashkenas/coffeescript",
+    "koa": "^0.13.0",
+    "koa-logger": "^1.2.2",
+    "koa-response-time": "^1.0.2",
+    "koa-router": "^3.4.0"
+  },
+  "engines": {
+    "node": "^0.11.14",
+    "npm": "^2.0.0"
+  },
+  "scripts": {
+    "start": "coffee --nodejs --harmony server.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jedahan/bregalad.git"
+  }
+}
