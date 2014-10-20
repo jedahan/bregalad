@@ -2,7 +2,7 @@
 
 ### Post a new tree
 
-    POST /tree
+    POST /tree?timestamp={timestamp}
 
 Unity App POST’s image file to **/tree**, and the server will respond with the file path to the image, which can then be retrieved via http. The filename of the image will be **$timestamp**.jpg
 
@@ -33,7 +33,7 @@ When the user has hit submit on the iPad app, the following information is submi
   * **email** where to send the email(string@string.string)
   * **interested** is "name" interested in being contacted by a representative (boolean or blank if they walked away)
   * **image** the filepath to the photo
-  * **timestamp** when this was submitted
+  * **timestamp** when the original image was taken
   * **delivered** was this email successfully sent? (boolean)
 
 ## Installation and Deployment
