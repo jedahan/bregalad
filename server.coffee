@@ -17,7 +17,8 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: treepath}}), ro
 app.get '/trees', routes.getTrees
 # /trees/#{unix-epoch-timestamp}.jpg
 app.get /^\/trees\/\d{10}.jpg$/, ->
-  yield send @, @params['timestamp']+'.jpg', root: treepath
+  path = @path.split('/')[2]
+  yield send @, path, root: treepath
 
 app.listen process.env.PORT or 5000, ->
   port = @_connectionKey.split(':')[2]
