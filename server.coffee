@@ -56,7 +56,7 @@ app.get '/trees', (next) ->
   trees = yield dir 'trees'
   num = +@query['num'] or 4
   offset = +@query['offset'] or 0
-  trees = trees.filter (x) -> x isnt 'archive'
+  trees = trees.filter (x) -> /jpg$/.test x
   @body = trees.reverse()[offset...offset+num]
 
 # POST /participant
