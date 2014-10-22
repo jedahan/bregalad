@@ -5,6 +5,7 @@ logger = require 'koa-logger'
 router = require 'koa-router'
 body = require 'koa-better-body'
 send = require 'koa-send'
+uuid = require 'node-uuid'
 
 # filesystem commands
 thunkify = require 'thunkify'
@@ -62,6 +63,12 @@ app.get '/trees', (next) ->
 # POST /participant
 app.post '/participant', body(), (next) ->
   fields = @request.body.fields
+  uuid = uuid.v4()
+  name = fields.name
+  email = fields.email
+  interested = JSON.parse(fields.interested)
+  image = fields.image
+  delivered = false
   timestamp = fields.timestamp or (new Date).getTime()
 
   path = "trees/#{timestamp}.jpg"
@@ -88,8 +95,8 @@ app.get /^\/trees\/\d{10}.jpg$/, ->
 app.listen process.env.PORT or 5000, ->
   port = @_connectionKey.split(':')[2]
   console.log "[#{process.pid}] listening on :#{port}"
-  emailer = setTimeout ( ->
-    for participant in db.find({sent: false})
+  emailer = setInterval ( ->
+    for participant in db.find({delivered: false})
       console.log "sendEmail #{participant}"
 	  #sendEmail participant
   ), 5000

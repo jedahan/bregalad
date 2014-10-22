@@ -34,8 +34,7 @@ When the user has hit submit on the iPad app, the following information is submi
   * **name** participants full name
   * **email** where to send the email(string@string.string)
   * **interested** is "name" interested in being contacted by a representative (boolean or blank if they walked away)
-  * **image** the filepath to the photo
-  * **timestamp** when the original image was taken
+  * **image** the timestamp of the photo to claim
   * **delivered** was this email successfully sent? (boolean)
 
 ## Installation and Deployment
