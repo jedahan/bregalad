@@ -42,3 +42,25 @@ When the user has hit submit on the iPad app, the following information is submi
 The API requires [node.js](http://nodejs.org) v0.11.x, [coffeescript](http://github.com/jashkenas/coffeescript) trunk, and is built on the [koa](koajs.com) web framework.
 
 The recommended setup is to use [nvm](https://github.com/creationix/nvm) to handle installing and using the correct version of node when doing `npm install` and `npm start`.
+
+For example, if you are on a fresh Yosemite:
+
+    # Install nvm (node version manager)
+    curl https://raw.githubusercontent.com/creationix/nvm/v0.17.3/install.sh | bash
+
+    # Install node v0.11.13
+    nvm install v0.11.13
+
+    # Set v0.11.13 to the default
+    nvm alias default v0.11.13
+
+    # Install libraries
+    npm install
+
+Now you should be ready to run the server
+
+    npm start
+
+Now check out [http://localhost:5000](http://localhost:5000)
+
+Cheers!
