@@ -53,10 +53,9 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), (n
       @body = "Image #{info.path} already exists, but is a different size!"
   else
     yield move temp, path
-    @body = {
+    @body =
       "message": "New tree uploaded!"
       "url": "http://localhost:5000/#{path}"
-    }
 
 # GET /trees
 app.get '/trees', (next) ->
