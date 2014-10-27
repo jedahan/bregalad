@@ -5,7 +5,6 @@ logger = require 'koa-logger'
 router = require 'koa-router'
 body = require 'koa-better-body'
 send = require 'koa-send'
-uuid = require 'node-uuid'
 
 # filesystem commands
 thunkify = require 'thunkify'
@@ -14,14 +13,21 @@ dir = thunkify fs.readdir
 stat = thunkify fs.stat
 move = thunkify fs.rename
 
-# directory to store tree images
-treepath = __dirname + '/trees'
+# directories to store images
+tree_dir = __dirname + '/trees'
+composite_dir = __dirname + '/composites'
 
 # nedb is a simple datastore like sqlite, but with mongodb syntax
 nedb = require 'nedb'
-db = new nedb filename: 'db/participants.db', autoload: true
 wrap = require 'co-nedb'
+db = new nedb filename: 'db/participants.db', autoload: true
 participants = wrap db
+co = require 'co'
+util = require 'util'
+
+# email sending
+config = require './config.json'
+postmark = require('postmark')(config.postmark_key)
 
 # choose our middleware here
 app = koa()
@@ -30,7 +36,7 @@ app.use logger()
 app.use router(app)
 
 # POST /tree image=@tree.jpg timestamp=$(date +%s)
-app.post '/tree', body({multipart: true, formidable: {uploadDir: treepath}}), (next) ->
+app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), (next) ->
   timestamp = @request.body.fields.timestamp
   temp = @request.body.files.image.path
   size = @request.body.files.image.size
@@ -41,10 +47,10 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: treepath}}), (n
     info = yield stat path
     if size is info.size
       @status = 202
-      @body = "Tree #{timestamp} already exists, and is the same size."
+      @body = "Image #{info.path} already exists, and is the same size."
     else
       @status = 409
-      @body = "Tree #{timestamp} already exists, but is a different size!"
+      @body = "Image #{info.path} already exists, but is a different size!"
   else
     yield move temp, path
     @body = {
@@ -61,27 +67,17 @@ app.get '/trees', (next) ->
   @body = trees.reverse()[offset...offset+num]
 
 # POST /participant
-app.post '/participant', body(), (next) ->
-  fields = @request.body.fields
-  uuid = uuid.v4()
-  name = fields.name
-  email = fields.email
-  interested = JSON.parse(fields.interested)
-  image = fields.image
-  delivered = false
-  timestamp = fields.timestamp or (new Date).getTime()
+app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), (next) ->
+  participant = @request.body.fields
+  participant.delivered = false
+  participant.timestamp ?= (new Date).getTime()
+  participant = yield participants.insert participant
+  path = @request.body.image?.path
 
-  path = "trees/#{timestamp}.jpg"
-  trees = yield dir "trees"
-  archive = yield dir "trees/archive"
-
-  if (process.env['NODE_ENV'] is "development") \
-  or (timestamp in trees) \
-  or (timestamp in archive)
-    @body = yield participants.insert fields
+  if path
+    @body = yield move path, path.replace /[^/]*$/, participant._id+'.jpg'
   else
-    @status = 404
-    @body = "Tree #{fields.image} not found"
+    @body = "no image? ok"
 
 # GET /participant
 app.get '/participant', (next) ->
@@ -93,10 +89,20 @@ app.get /^\/trees\/\d{10}.jpg$/, ->
   yield send @, path, root: treepath
 
 app.listen process.env.PORT or 5000, ->
+  #co( -> console.log yield participants.find({}) )()
   port = @_connectionKey.split(':')[2]
   console.log "[#{process.pid}] listening on :#{port}"
-  emailer = setInterval ( ->
-    for participant in db.find({delivered: false})
-      console.log "sendEmail #{participant}"
-	  #sendEmail participant
-  ), 5000
+  email =
+    "From": "stuff@fakelove.tv"
+    "To": "jonathan.d@fakelove.tv"
+    "Subject": "Umpqua Growth"
+    "TextBody": "test message"
+  setInterval ( ->
+    co( ->
+      for participant in yield participants.find({delivered: false})
+        email["To"] = participant.email
+        postmark.send email, (error, success) ->
+          sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
+          console.log "#{sent} emails sent"
+    )()
+  ), 1000
