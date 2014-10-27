@@ -66,7 +66,9 @@ For example, if you are on a fresh Yosemite:
     npm install
 
 
-Its possible that npm doesn't get picked up in your `$PATH`, so add it to your bashrc.
+Its possible that npm doesn't get picked up in your `$PATH`, so add it to your **.profile**:
+
+    echo 'source ${HOME}/.nvm/nvm.sh' > ~/.profile
 
 Make sure to add your postmarkapp api_key to **config.json**
 
