@@ -63,4 +63,12 @@ Now you should be ready to run the server
 
 Now check out [http://localhost:5000](http://localhost:5000)
 
+
+If you want to just mess around with email sending, try
+
+    npm test
+    http :5000 email=who@where.com
+
+They will get some killer email
+
 Cheers!

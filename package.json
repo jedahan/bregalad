@@ -30,7 +30,8 @@
     "npm": "^2.0.0"
   },
   "scripts": {
-    "start": "coffee --nodejs --harmony server.coffee"
+    "start": "coffee --nodejs --harmony server.coffee",
+    "test": "coffee --nodejs --harmony email.coffee"
   },
   "repository": {
     "type": "git",
