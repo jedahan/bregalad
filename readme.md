@@ -1,5 +1,13 @@
 # Bregalad, a backend that helps transform people into Ents
 
+## Testing
+
+  Once the server is up and running, if you want to test a new email try this command:
+
+    curl -i http://localhost:/participant --form image=@yo.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11215 --form timed_out=false
+
+  You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
+
 ### Post a new tree
 
     POST /tree?timestamp={timestamp}
@@ -56,6 +64,14 @@ For example, if you are on a fresh Yosemite:
 
     # Install libraries
     npm install
+
+
+Its possible that npm doesn't get picked up in your `$PATH`, so add it to your bashrc.
+
+Make sure to add your postmarkapp api_key to **config.json**
+
+    mv config.json{.template,}
+    vim config.json
 
 Now you should be ready to run the server
 

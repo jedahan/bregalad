@@ -9,7 +9,7 @@ ipsum = require 'hipsteripsum'
 mustache = require 'mustache'
 template = null
 fs = require 'fs'
-fs.readFile 'templates/css-internal.html', 'utf-8', (err, data) -> template = data
+fs.readFile 'templates/css-inline.html', 'utf-8', (err, data) -> template = data
 
 # koa, from the makers of express
 koa = require 'koa'
@@ -28,7 +28,7 @@ app.use logger()
 app.use body multipart: true, formidable: uploadDir: __dirname+'/test'
 app.use (next) ->
   console.log participant = @request.body.fields
-  console.log rendered = mustache.render template, participant
+  rendered = mustache.render template, participant
   email =
     "From": "stuff@fakelove.tv"
     "To": participant.email
