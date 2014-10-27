@@ -1,0 +1,31 @@
+<!-- variables:  -->
+<!--   **cid** - the content, id, what gets attached to the email -->
+<!--   **first_name** - just the first name -->
+<!--   **interested** - does the person want a followup email -->
+<!--   **timed_out** - did the person just leave? -->
+
+<html>
+<head>
+</head>
+
+<body>
+  <p> Hey {{first_name}}! Here's your killer portrait </p>
+
+  <img src="cid:{{cid}}"></img>
+
+  {{#timed_out}}
+  Guess you didn't see the last page, if you'd like us to follow up with a specialist, just email <a href="mailto:rep@umpquabank.com">rep@umpquabank.com</a>
+  {{/timed_out}}
+
+  {{#interested}}
+    Hey, you said you are interested in a follow-up email, you'll get one from a specialist shortly!
+  {{/interested}}
+
+  {{^timed_out}}
+    {{^interested}}
+      Wow, I guess the picture was all you wanted. No financial advice neded.
+    {{/interested}}
+  {{^timed_out}}
+</body>
+
+</html>
