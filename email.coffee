@@ -28,6 +28,7 @@ app.use logger()
 app.use body multipart: true, formidable: uploadDir: __dirname+'/test'
 app.use (next) ->
   console.log participant = @request.body.fields
+  path = @request.body.files.image.path
   rendered = mustache.render template, participant
   email =
     "From": "stuff@fakelove.tv"
@@ -35,6 +36,12 @@ app.use (next) ->
     "Subject": "Umpqua Growth"
     "HtmlBody": rendered
     "TextBody": ipsum.get()
+    "Attachments": [{
+      "Content": fs.readFileSync(path).toString('base64'),
+      "Name": "profile.jpg",
+      "ContentType": "image/jpeg",
+      "ContentID": "cid:profile.jpg"
+    }]
 
   @body = yield co( ->
     success = yield send email
@@ -45,4 +52,4 @@ app.use (next) ->
   )
 
 app.listen port, ->
-  console.log "http :#{port} email=jonathan.d@fakelove.tv first_name=Jonathan interested=true"
+  console.log "curl localhost:#{port} --form image=@yo.jpg --form email=jonathan.d@fakelove.tv --form first_name=Jonathan --form interested=true"
