@@ -43,6 +43,8 @@ postmark = require('postmark')(config.postmark_key)
 send = thunkify postmark.send
 
 sendEmail = (participant) ->
+  console.log "emailing #{participant.first_name}"
+  participants.update participant, $set: delivered: true
   rendered = mustache.render template, participant
   email =
     "From": "stuff@fakelove.tv"
@@ -68,6 +70,7 @@ sendEmail = (participant) ->
     attached += 1
     if attached is images.length - 1
       postmark.send email, (error, success) ->
+        console.log err, success
         sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
         console.log "#{sent} email sent to #{participant.email} [#{participant._id}]"
 
@@ -140,7 +143,6 @@ app.listen port, ->
   setInterval ( ->
     co( ->
       for participant in yield participants.find({delivered: false})
-        console.log "emailing #{participant.first_name}"
         yield sendEmail participant
     )()
   ), timeout*1000
