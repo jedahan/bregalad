@@ -53,7 +53,8 @@ sendEmail = (participant) ->
   yield participants.update participant, $set: delivered: true
   rendered = mustache.render template, participant
   email =
-    "From": "you@exhibitgrowth.com"
+    #"From": "you@exhibitgrowth.com"
+    "From": "stuff@fakelove.tv"
     "To": participant.email
     "Subject": "Umpqua Growth"
     "ReplyTo": "exhibitgrowth@umpquabank.com"
