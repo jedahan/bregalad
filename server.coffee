@@ -53,9 +53,10 @@ sendEmail = (participant) ->
   yield participants.update participant, $set: delivered: true
   rendered = mustache.render template, participant
   email =
-    "From": "stuff@fakelove.tv"
+    "From": "you@exhibitgrowth.com"
     "To": participant.email
     "Subject": "Umpqua Growth"
+    "ReplyTo": "exhibitgrowth@umpquabank.com"
     "HtmlBody": rendered
     "Attachments": [{
       "Content": fs.readFileSync("#{composite_dir}/#{participant._id}.jpg").toString('base64')
