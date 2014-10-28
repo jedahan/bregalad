@@ -8,6 +8,12 @@
 
   You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
 
+### The database
+
+  The database is just participants.db, which is json formatted. Just move/delete to reset. Copy this anywhere to have a backup. Copy back to participants.db to restore. Hooray flat files!
+
+## Endpoints
+
 ### Post a new tree
 
     POST /tree?timestamp={timestamp}
