@@ -29,22 +29,22 @@ participants = wrap db
 co = require 'co'
 util = require 'util'
 
-# email sending
+# email
 postmark = require('postmark')(config.postmark_key)
-
-# email template
 mustache = require 'mustache'
 template = null
-fs = require 'fs'
-fs.readFile 'template/email.html', 'utf-8', (err, data) -> template = data
+Styliner = require 'styliner'
+styliner = new Styliner(__dirname + '/template')
+source = fs.readFileSync('template/email.html', 'utf8')
+styliner.processHTML(source).then((html) -> template = html)
 
 # email sending
 postmark = require('postmark')(config.postmark_key)
 send = thunkify postmark.send
 
 sendEmail = (participant) ->
-  console.log "emailing #{participant.first_name}"
-  participants.update participant, $set: delivered: true
+  console.log "emailing #{participant.first_name} #{participant.last_name} (#{participant.email}) [#{participant._id}]"
+  yield participants.update participant, $set: delivered: true
   rendered = mustache.render template, participant
   email =
     "From": "stuff@fakelove.tv"
