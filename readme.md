@@ -34,7 +34,9 @@ When the user has hit submit on the iPad app, the following information is submi
 
 ### Get participants
 
-    GET /participants{.csv}
+    GET /participants{.csv|.json}
+
+You can view all the participants as .json, .csv, or html (no extention)
 
 #### Participant Model
   * **fist_name** participants first name
