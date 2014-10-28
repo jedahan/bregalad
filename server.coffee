@@ -29,6 +29,11 @@ participants = wrap db
 co = require 'co'
 util = require 'util'
 
+# csv stuff
+deepjson2csv = require 'deepjson2csv'
+json2csv = thunkify deepjson2csv
+
+
 # email
 postmark = require('postmark')(config.postmark_key)
 mustache = require 'mustache'
@@ -120,9 +125,14 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
   new_path = path.replace /[^/]*$/, "#{participant._id}.jpg"
   @body = yield move path, new_path
 
-# GET /participant
-app.get '/participant', (next) ->
-  @body = yield participants.find()
+# GET /participants
+app.get '/participants', (next) ->
+  @body = yield participants.find({})
+
+# GET /participants.csv
+app.get '/participants.csv', (next) ->
+  all = yield participants.find({})
+  @body = yield json2csv {data: all, fields: ['email','first_name','last_name','interested','timedout','delivered','timestamp','_id']}
 
 # GET /trees/{timestamp}.jpg
 app.get /^\/trees\/\d{10}.jpg$/, ->
