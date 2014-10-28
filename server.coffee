@@ -1,3 +1,7 @@
+config = require './config.json'
+port = process.env.PORT or 5000
+timeout = 1 # every 30 seconds, try sending unsent emails
+
 # koa, from the makers of express
 koa = require 'koa'
 time = require 'koa-response-time'
@@ -20,14 +24,52 @@ composite_dir = __dirname + '/composites'
 # nedb is a simple datastore like sqlite, but with mongodb syntax
 nedb = require 'nedb'
 wrap = require 'co-nedb'
-db = new nedb filename: 'db/participants.db', autoload: true
+db = new nedb filename: 'participants.db', autoload: true
 participants = wrap db
 co = require 'co'
 util = require 'util'
 
 # email sending
-config = require './config.json'
 postmark = require('postmark')(config.postmark_key)
+
+# email template
+mustache = require 'mustache'
+template = null
+fs = require 'fs'
+fs.readFile 'template/email.html', 'utf-8', (err, data) -> template = data
+
+# email sending
+postmark = require('postmark')(config.postmark_key)
+send = thunkify postmark.send
+
+sendEmail = (participant) ->
+  rendered = mustache.render template, participant
+  email =
+    "From": "stuff@fakelove.tv"
+    "To": participant.email
+    "Subject": "Umpqua Growth"
+    "HtmlBody": rendered
+    "Attachments": [{
+      "Content": fs.readFileSync("#{composite_dir}/#{participant._id}.jpg").toString('base64')
+      "Name": "profile.jpg"
+      "ContentType": "image/jpeg"
+      "ContentID": "cid:profile.jpg"
+    }]
+
+  attached = 0
+  images = yield dir "template/images"
+  for image in images
+    email["Attachments"].push({
+      "Content": fs.readFileSync("template/images/#{image}").toString('base64')
+      "Name": image
+      "ContentType": "image/png"
+      "ContentID": "cid:#{image}"
+    })
+    attached += 1
+    if attached is images.length - 1
+      postmark.send email, (error, success) ->
+        sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
+        console.log "#{sent} email sent to #{participant.email} [#{participant._id}]"
 
 # choose our middleware here
 app = koa()
@@ -55,7 +97,7 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), (n
     yield move temp, path
     @body =
       "message": "New tree uploaded!"
-      "url": "http://localhost:5000/#{path}"
+      "url": "http://localhost:#{port}/#{path}"
 
 # GET /trees
 app.get '/trees', (next) ->
@@ -71,12 +113,9 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
   participant.delivered = false
   participant.timestamp ?= (new Date).getTime()
   participant = yield participants.insert participant
-  path = @request.body.image?.path
-
-  if path
-    @body = yield move path, path.replace /[^/]*$/, participant._id+'.jpg'
-  else
-    @body = "no image? ok"
+  path = @request.body.files.image.path
+  new_path = path.replace /[^/]*$/, "#{participant._id}.jpg"
+  @body = yield move path, new_path
 
 # GET /participant
 app.get '/participant', (next) ->
@@ -87,21 +126,22 @@ app.get /^\/trees\/\d{10}.jpg$/, ->
   path = @path.split('/')[2]
   yield send @, path, root: treepath
 
-app.listen process.env.PORT or 5000, ->
+app.listen port, ->
   #co( -> console.log yield participants.find({}) )()
-  port = @_connectionKey.split(':')[2]
   console.log "[#{process.pid}] listening on :#{port}"
-  email =
-    "From": "stuff@fakelove.tv"
-    "To": "jonathan.d@fakelove.tv"
-    "Subject": "Umpqua Growth"
-    "TextBody": "test message"
+  console.log "curl localhost:#{port}/participant \
+                --form image=@profile.jpg \
+                --form email=jonathan.d@fakelove.tv \
+                --form first_name=Jonathan \
+                --form last_name=Dahan \
+                --form interested=true \
+                --form timedout=false"
+  # Every 15 seconds, try and send
   setInterval ( ->
     co( ->
       for participant in yield participants.find({delivered: false})
-        email["To"] = participant.email
-        postmark.send email, (error, success) ->
-          sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
-          console.log "#{sent} emails sent"
+        console.log "emailing #{participant.first_name}"
+        yield sendEmail participant
     )()
-  ), 1000
+  ), timeout*1000
+

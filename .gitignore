@@ -1,7 +1,7 @@
 node_modules
-npm-debug.log
-trees/*jpg
-db/*db
-yo.png
+*db
+*log
+*swp
 config.json
-test/*jpg
+trees/*
+composites/*
