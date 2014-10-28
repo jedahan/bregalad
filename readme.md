@@ -4,7 +4,7 @@
 
   Once the server is up and running, if you want to test a new email try this command:
 
-    curl -i http://localhost:/participant --form image=@template/images/profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11215 --form timed_out=false
+    curl -i http://localhost:/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timed_out=false
 
   You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
 
