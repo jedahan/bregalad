@@ -33,6 +33,7 @@ util = require 'util'
 deepjson2csv = require 'deepjson2csv'
 json2csv = thunkify deepjson2csv
 
+table_template = fs.readFileSync('template/table.html', 'utf8')
 
 # email
 postmark = require('postmark')(config.postmark_key)
@@ -127,6 +128,11 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
 
 # GET /participants
 app.get '/participants', (next) ->
+  all = participants: yield participants.find({})
+  @body = mustache.render table_template, all
+
+# GET /participants.json
+app.get '/participants.json', (next) ->
   @body = yield participants.find({})
 
 # GET /participants.csv
