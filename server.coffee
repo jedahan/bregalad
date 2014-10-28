@@ -58,6 +58,7 @@ sendEmail = (participant) ->
     "To": participant.email
     "Subject": "Umpqua Growth"
     "ReplyTo": "exhibitgrowth@umpquabank.com"
+    "TextBody": "Please email exhibitgrowth@umpquabank.com if you are interested in being contacted by a specialist"
     "HtmlBody": rendered
     "Attachments": [{
       "Content": fs.readFileSync("#{composite_dir}/#{participant._id}.jpg").toString('base64')
