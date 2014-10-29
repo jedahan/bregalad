@@ -43,10 +43,8 @@ Styliner = require 'styliner'
 styliner = new Styliner(__dirname + '/template')
 source = fs.readFileSync('template/email.html', 'utf8')
 styliner.processHTML(source).then((html) -> template = html)
-
 # email sending
 postmark = require('postmark')(config.postmark_key)
-send = thunkify postmark.send
 
 sendEmail = (participant) ->
   console.log "emailing #{participant.first_name} #{participant.last_name} (#{participant.email}) [#{participant._id}]"
