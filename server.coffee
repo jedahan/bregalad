@@ -126,6 +126,7 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
   participant = @request.body.fields
   participant.delivered = false
   participant.timestamp ?= (new Date).getTime()
+  participant.date = new Date(participant.timestamp)
   participant = yield participants.insert participant
   path = @request.body.files.image.path
   new_path = path.replace /[^/]*$/, "#{participant._id}.jpg"
