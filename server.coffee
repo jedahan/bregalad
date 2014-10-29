@@ -133,15 +133,18 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
 
 # GET /participants
 app.get '/participants', ->
-  @body = mustache.render table_template, participants: yield participants.find({})
+  options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
+  @body = mustache.render table_template, participants: yield participants.find(options)
 
 # GET /participants.json
 app.get '/participants.json', ->
-  @body = yield participants.find({})
+  options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
+  @body = yield participants.find(options)
 
 # GET /participants.csv
 app.get '/participants.csv', ->
-  @body = yield json2csv data: yield participants.find({})
+  options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
+  @body = yield json2csv data: yield participants.find(options)
 
 app.listen port, ->
   #co( -> console.log yield participants.find({}) )()

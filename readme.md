@@ -40,9 +40,9 @@ When the user has hit submit on the iPad app, the following information is submi
 
 ### Get participants
 
-    GET /participants{.csv|.json}
+    GET /participants{.csv|.json}[?start={unix timestamp}][&end={unix timestamp}]
 
-You can view all the participants as .json, .csv, or html (no extention)
+You can view all the participants as .json, .csv, or html (no extention). You can filter by start unix timestamp and/or end unix timestamp.
 
 #### Participant Model
   * **fist_name** participants first name
