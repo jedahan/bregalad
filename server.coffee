@@ -90,7 +90,7 @@ app.use logger()
 app.use router(app)
 
 # POST /tree image=@tree.jpg timestamp=$(date +%s)
-app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), (next) ->
+app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), ->
   timestamp = @request.body.fields.timestamp
   temp = @request.body.files.image.path
   size = @request.body.files.image.size
@@ -112,7 +112,7 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), (n
       "url": "http://localhost:#{port}/#{path}"
 
 # GET /trees
-app.get '/trees', (next) ->
+app.get '/trees', ->
   trees = yield dir 'trees'
   num = +@query['num'] or 4
   offset = +@query['offset'] or 0
@@ -121,11 +121,10 @@ app.get '/trees', (next) ->
 
 # GET /trees/{timestamp}.jpg
 app.get /^\/trees\/\d{10}.jpg$/, ->
-  path = @path.split('/')[2]
-  yield send @, path, root: tree_dir
+  yield send @, @path.split('/')[2], root: tree_dir
 
 # POST /participant
-app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), (next) ->
+app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), ->
   participant = @request.body.fields
   participant.delivered = false
   participant.timestamp ?= (new Date).getTime()
@@ -135,15 +134,15 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
   @body = yield move path, new_path
 
 # GET /participants
-app.get '/participants', (next) ->
+app.get '/participants', ->
   @body = mustache.render table_template, participants: yield participants.find({})
 
 # GET /participants.json
-app.get '/participants.json', (next) ->
+app.get '/participants.json', ->
   @body = yield participants.find({})
 
 # GET /participants.csv
-app.get '/participants.csv', (next) ->
+app.get '/participants.csv', ->
   @body = yield json2csv data: yield participants.find({})
 
 app.listen port, ->
