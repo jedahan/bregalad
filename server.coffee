@@ -119,6 +119,11 @@ app.get '/trees', (next) ->
   trees = trees.filter (x) -> /jpg$/.test x
   @body = trees.reverse()[offset...offset+num]
 
+# GET /trees/{timestamp}.jpg
+app.get /^\/trees\/\d{10}.jpg$/, ->
+  path = @path.split('/')[2]
+  yield send @, path, root: tree_dir
+
 # POST /participant
 app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), (next) ->
   participant = @request.body.fields
@@ -131,8 +136,7 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
 
 # GET /participants
 app.get '/participants', (next) ->
-  all = participants: yield participants.find({})
-  @body = mustache.render table_template, all
+  @body = mustache.render table_template, participants: yield participants.find({})
 
 # GET /participants.json
 app.get '/participants.json', (next) ->
@@ -140,13 +144,7 @@ app.get '/participants.json', (next) ->
 
 # GET /participants.csv
 app.get '/participants.csv', (next) ->
-  all = yield participants.find({})
-  @body = yield json2csv {data: all, fields: ['email','first_name','last_name','interested','timedout','delivered','timestamp','_id']}
-
-# GET /trees/{timestamp}.jpg
-app.get /^\/trees\/\d{10}.jpg$/, ->
-  path = @path.split('/')[2]
-  yield send @, path, root: tree_dir
+  @body = yield json2csv data: yield participants.find({})
 
 app.listen port, ->
   #co( -> console.log yield participants.find({}) )()

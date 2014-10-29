@@ -14,7 +14,7 @@
   "dependencies": {
     "co-nedb": "^2.0.1",
     "coffee-script": "git://github.com/jashkenas/coffeescript",
-    "deepjson2csv": "^1.0.1",
+    "deepjson2csv": "git://github.com/jedahan/deepjson2csv",
     "koa": "^0.13.0",
     "koa-better-body": "^1.0.3",
     "koa-logger": "^1.2.2",
