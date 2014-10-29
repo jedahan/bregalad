@@ -146,7 +146,7 @@ app.get '/participants.csv', (next) ->
 # GET /trees/{timestamp}.jpg
 app.get /^\/trees\/\d{10}.jpg$/, ->
   path = @path.split('/')[2]
-  yield send @, path, root: treepath
+  yield send @, path, root: tree_dir
 
 app.listen port, ->
   #co( -> console.log yield participants.find({}) )()
