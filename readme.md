@@ -12,6 +12,8 @@
 
   The database is just participants.db, which is json formatted. Just move/delete to reset. Copy this anywhere to have a backup. Copy back to participants.db to restore. Hooray flat files!
 
+  There is also a backup script, called **backup.sh**. If you want to use this to upload the files to a sftp server, copy **config.sh.template** to **config.sh** and fill in the appropriate variables - `USER`, `HOST`, and `IDENTITY`.
+
 ## Endpoints
 
 ### Post a new tree
