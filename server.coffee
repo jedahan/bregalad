@@ -16,6 +16,7 @@ fs = require 'fs'
 dir = thunkify fs.readdir
 stat = thunkify fs.stat
 move = thunkify fs.rename
+readFile = thunkify fs.readFile
 
 # directories to store images
 tree_dir = __dirname + '/trees'
@@ -50,6 +51,7 @@ sendEmail = (participant) ->
   console.log "emailing #{participant.first_name} #{participant.last_name} (#{participant.email}) [#{participant._id}]"
   yield participants.update participant, $set: delivered: true
   rendered = mustache.render template, participant
+  image = yield readFile("#{composite_dir}/#{participant._id}.jpg")
   email =
     #"From": "you@exhibitgrowth.com"
     "From": "stuff@fakelove.tv"
@@ -59,7 +61,7 @@ sendEmail = (participant) ->
     "TextBody": "Please email exhibitgrowth@umpquabank.com if you are interested in being contacted by a specialist"
     "HtmlBody": rendered
     "Attachments": [{
-      "Content": fs.readFileSync("#{composite_dir}/#{participant._id}.jpg").toString('base64')
+      "Content": image.toString('base64')
       "Name": "profile.jpg"
       "ContentType": "image/jpeg"
       "ContentID": "cid:profile.jpg"
