@@ -92,11 +92,12 @@ Now you should be ready to run the server
 Now check out [http://localhost:5000](http://localhost:5000)
 
 
-If you want to just mess around with email sending, try
+For production, if you want the server to restart on crash, make sure to install forever globally:
 
-    npm test
-    http :5000 email=who@where.com
+    npm install -g forever
 
-They will get some killer email
+Then you can run:
 
-Cheers!
+    npm run-script production
+
+Try killing the process, and watch it revive

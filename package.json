@@ -34,6 +34,7 @@
   },
   "scripts": {
     "start": "coffee --nodejs --harmony server.coffee",
+    "production": "forever -c \"$(npm bin)/coffee --nodejs --harmony\" server.coffee",
     "test": "coffee --nodejs --harmony email.coffee"
   },
   "repository": {
