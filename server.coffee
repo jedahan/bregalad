@@ -83,9 +83,9 @@ sendEmail = (participant) ->
           console.log "email sent to #{participant.email} [#{participant._id}]"
       catch error
         console.error error
-        if error.code is 300
+        if error.status is 422
           yield participants.remove _id: participant._id
-          console.error "removing [#{participant._id}]: invalid email"
+          console.error "removing [#{participant._id}]:"
         else
           yield participants.update {_id: participant._id}, $set: delivered: false
           console.error "email sending failed to #{participant.email} [#{participant._id}]"
