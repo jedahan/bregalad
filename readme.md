@@ -32,11 +32,12 @@ If accept-type is application/html, render a paginated gallery of 25 images at a
 
 ### Send an email with the chosen treeface
 
-    POST /participant?name={string} \
+    POST /participant?first_name={string} \
+                     &last_name={string} \
                      &email={email} \
-                     &interested={true|false|**empty**} \
-                     &image={unix timestamp} \
-                     &timestamp={unix timestamp}
+                     &interested={true|false} \
+                     &timedout={true|false} \
+                     &image=@{www-form uploaded image}
 
 When the user has hit submit on the iPad app, the following information is submitted or created as a new entry.
 
