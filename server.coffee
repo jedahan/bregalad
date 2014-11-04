@@ -139,6 +139,9 @@ app.get '/participants', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
   @body = mustache.render table_template, participants: yield participants.find(options)
 
+app.get '/images/:image', ->
+  @body = yield send @, @path, { root: __dirname + '/templates' }
+
 # GET /participants.json
 app.get '/participants.json', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
