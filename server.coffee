@@ -17,6 +17,7 @@ dir = thunkify fs.readdir
 stat = thunkify fs.stat
 move = thunkify fs.rename
 readFile = thunkify fs.readFile
+async = require 'async'
 
 # directories to store images
 tree_dir = __dirname + '/trees'
@@ -44,16 +45,14 @@ Styliner = require 'styliner'
 styliner = new Styliner(__dirname + '/template')
 source = fs.readFileSync('template/email.html', 'utf8')
 styliner.processHTML(source).then((html) -> template = html)
-# email sending
-postmark = require('postmark')(config.postmark_key)
+postmark_send = thunkify postmark.send
 
 sendEmail = (participant) ->
   console.log "emailing #{participant.first_name} #{participant.last_name} (#{participant.email}) [#{participant._id}]"
-  yield participants.update participant, $set: delivered: true
+  yield participants.update {_id: participant._id}, $set: delivered: true
   rendered = mustache.render template, participant
-  image = yield readFile("#{composite_dir}/#{participant._id}.jpg")
+  image = yield readFile "#{composite_dir}/#{participant._id}.jpg"
   email =
-    #"From": "you@exhibitgrowth.com"
     "From": "stuff@fakelove.tv"
     "To": participant.email
     "Subject": "Umpqua Growth"
@@ -78,10 +77,14 @@ sendEmail = (participant) ->
     })
     attached += 1
     if attached is images.length - 1
-      postmark.send email, (error, success) ->
-        console.log error, success
-        sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
-        console.log "#{sent} email sent to #{participant.email} [#{participant._id}]"
+      try
+        sent = yield postmark_send email
+        if sent?.Message is 'OK'
+          console.log "email sent to #{participant.email} [#{participant._id}]"
+      catch
+        yield participants.update {_id: participant._id}, $set: delivered: false
+        console.error "email sending failed to #{participant.email} [#{participant._id}]"
+        console.error sent
 
 # choose our middleware here
 app = koa()
