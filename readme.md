@@ -45,7 +45,7 @@ When the user has hit submit on the iPad app, the following information is submi
 
     GET /participants{.csv|.json}[?start={unix timestamp}][&end={unix timestamp}]
 
-You can view all the participants as .json, .csv, or html (no extention). You can filter by start unix timestamp and/or end unix timestamp.
+You can view all the participants as .json, .csv, or html (no extention). You can filter by start unix timestamp and/or end unix timestamp. The timestamp should be the same format as `date +%s`.
 
 #### Participant Model
   * **fist_name** participants first name
