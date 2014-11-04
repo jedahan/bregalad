@@ -79,7 +79,7 @@ sendEmail = (participant) ->
     attached += 1
     if attached is images.length - 1
       postmark.send email, (error, success) ->
-        console.log err, success
+        console.log error, success
         sent = yield participants.update participant, $set: delivered: success.Message is 'OK'
         console.log "#{sent} email sent to #{participant.email} [#{participant._id}]"
 
