@@ -140,7 +140,7 @@ app.get '/participants', ->
   @body = mustache.render table_template, participants: yield participants.find(options)
 
 app.get '/images/:image', ->
-  @body = yield send @, @path, { root: __dirname + '/templates' }
+  @body = yield send @, @path, { root: __dirname + '/public' }
 
 # GET /participants.json
 app.get '/participants.json', ->
