@@ -76,7 +76,7 @@ sendEmail = (participant) ->
       "ContentID": "cid:#{image}"
     })
     attached += 1
-    if attached is images.length - 1
+    if attached is images.length
       try
         sent = yield postmark_send email
         if sent?.Message is 'OK'
