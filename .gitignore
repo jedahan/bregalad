@@ -5,7 +5,5 @@ node_modules
 *csv
 config.sh
 config.json
-trees/*
-!trees/.gitkeep
-composites/*
-!composites/.gitkeep
+static/*
+static/.gitkeep

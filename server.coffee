@@ -20,8 +20,9 @@ readFile = thunkify fs.readFile
 async = require 'async'
 
 # directories to store images
-tree_dir = __dirname + '/trees'
-composite_dir = __dirname + '/composites'
+static_dir = __dirname + '/static'
+tree_dir = static_dir + '/trees'
+composite_dir = static_dir + '/composites'
 
 # nedb is a simple datastore like sqlite, but with mongodb syntax
 nedb = require 'nedb'
@@ -101,8 +102,8 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), ->
   timestamp = @request.body.fields.timestamp
   temp = @request.body.files.image.path
   size = @request.body.files.image.size
-  path = "trees/#{timestamp}.jpg"
-  files = yield dir "trees"
+  path = "#{tree_dir}/#{timestamp}.jpg"
+  files = yield dir tree_dir
 
   if timestamp in files
     info = yield stat path
@@ -120,15 +121,11 @@ app.post '/tree', body({multipart: true, formidable: {uploadDir: tree_dir}}), ->
 
 # GET /trees
 app.get '/trees', ->
-  trees = yield dir 'trees'
+  trees = yield dir tree_dir
   num = +@query['num'] or 4
   offset = +@query['offset'] or 0
   trees = trees.filter (x) -> /jpg$/.test x
   @body = trees.reverse()[offset...offset+num]
-
-# GET /trees/{timestamp}.jpg
-app.get /^\/trees\/\d{10}.jpg$/, ->
-  yield send @, @path.split('/')[2], root: tree_dir
 
 # POST /participant
 app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), ->
@@ -137,8 +134,8 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
   participant.interested = JSON.parse participant.interested
   participant.timedout = JSON.parse participant.timedout
   participant.zip = + participant.zip
-  participant.timestamp = (new Date).getTime()
-  participant.date = new Date(1000 * (+ participant.date) )
+  participant.date = new Date
+  participant.timestamp = + participant.date.getTime()
   participant = yield participants.insert participant
   path = @request.body.files.image.path
   new_path = path.replace /[^/]*$/, "#{participant._id}.jpg"
@@ -149,9 +146,6 @@ app.get '/participants', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
   @body = mustache.render table_template, participants: yield participants.find(options)
 
-app.get '/images/:image', ->
-  @body = yield send @, @path, { root: __dirname + '/public' }
-
 # GET /participants.json
 app.get '/participants.json', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
@@ -161,6 +155,9 @@ app.get '/participants.json', ->
 app.get '/participants.csv', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
   @body = yield json2csv data: yield participants.find(options)
+
+app.get /.*/, ->
+  yield send @, @path, { root: static_dir }
 
 app.listen port, ->
   #co( -> console.log yield participants.find({}) )()
