@@ -134,6 +134,9 @@ app.get /^\/trees\/\d{10}.jpg$/, ->
 app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), ->
   participant = @request.body.fields
   participant.delivered = false
+  participant.interested = JSON.parse participant.interested
+  participant.timedout = JSON.parse participant.timedout
+  participant.zip = + participant.zip
   participant.timestamp = (new Date).getTime()
   participant.date = new Date(1000 * (+ participant.date) )
   participant = yield participants.insert participant
