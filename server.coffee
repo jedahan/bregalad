@@ -134,8 +134,8 @@ app.get /^\/trees\/\d{10}.jpg$/, ->
 app.post '/participant', body({multipart: true, formidable: {uploadDir: composite_dir}}), ->
   participant = @request.body.fields
   participant.delivered = false
-  participant.timestamp ?= (new Date).getTime()
-  participant.date = new Date(participant.timestamp)
+  participant.timestamp = (new Date).getTime()
+  participant.date = new Date(participant.date)
   participant = yield participants.insert participant
   path = @request.body.files.image.path
   new_path = path.replace /[^/]*$/, "#{participant._id}.jpg"
@@ -168,7 +168,9 @@ app.listen port, ->
                 --form first_name=Jonathan \
                 --form last_name=Dahan \
                 --form interested=true \
-                --form timedout=false"
+                --form timedout=false \
+                --form zip=11201 \
+                --form date=$(date +%s)"
   # Every 15 seconds, try and send
   setInterval ( ->
     co( ->

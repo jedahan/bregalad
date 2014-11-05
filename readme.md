@@ -4,7 +4,7 @@
 
   Once the server is up and running, if you want to test a new email try this command:
 
-    curl -i http://localhost:/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timed_out=false
+    curl -i http://localhost:5000/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timedout=false --form date=$(date +%s) --form email=jonathan.d@fakelove.tv
 
   You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
 
@@ -32,12 +32,16 @@ If accept-type is application/html, render a paginated gallery of 25 images at a
 
 ### Send an email with the chosen treeface
 
-    POST /participant?first_name={string} \
-                     &last_name={string} \
-                     &email={email} \
-                     &interested={true|false} \
-                     &timedout={true|false} \
-                     &image=@{www-form uploaded image}
+    POST /participant
+    
+      first_name: string
+      last_name: string
+      email: string
+      zip: number
+      interested: boolean
+      timedout: boolean
+      image: base64 image
+      date: number (unix epoch timestamp)
 
 When the user has hit submit on the iPad app, the following information is submitted or created as a new entry.
 
