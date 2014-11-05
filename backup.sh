@@ -1,5 +1,7 @@
 [ -e ./config.sh ] && . ./config.sh
 
+pushd backup
+
 TODAY=$(date +%y%M%d)
 NOW=$(date +%y%M%d%H%m%S)
 TODAY_START=$(date --date=$(date +%Y-%m-%d) +%s)
@@ -19,5 +21,4 @@ put ${NOW}.csv
 bye
 EOF
 
-rm ${NOW}.db
-rm ${NOW}.csv
+popd
