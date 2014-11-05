@@ -170,7 +170,7 @@ app.listen port, ->
                 --form interested=true \
                 --form timedout=false \
                 --form zip=11201 \
-                --form date=$(date +%s)"
+                "
   # Every 15 seconds, try and send
   setInterval ( ->
     co( ->

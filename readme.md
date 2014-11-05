@@ -4,7 +4,7 @@
 
   Once the server is up and running, if you want to test a new email try this command:
 
-    curl -i http://localhost:5000/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timedout=false --form date=$(date +%s) --form email=jonathan.d@fakelove.tv
+    curl -i http://localhost:5000/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timedout=false --form email=jonathan.d@fakelove.tv
 
   You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
 
@@ -20,7 +20,7 @@
 
     POST /tree?timestamp={timestamp}
 
-Unity App POST’s image file to **/tree**, and the server will respond with the file path to the image, which can then be retrieved via http. The filename of the image will be **$timestamp**.jpg, and the image should be market in a form field called **image**. The timestamp must be 10 decimal digits, like the output from `$(date +%s)`.
+Unity App POST’s image file to **/tree**, and the server will respond with the file path to the image, which can then be retrieved via http. The filename of the image will be **$timestamp**.jpg, and the image should be market in a form field called **image**. The timestamp must be 10 decimal digits, like the output from `date +%s`.
 
 ### Get the last N trees
 
@@ -41,7 +41,6 @@ If accept-type is application/html, render a paginated gallery of 25 images at a
       interested: boolean
       timedout: boolean
       image: base64 image
-      date: number (unix epoch timestamp)
 
 When the user has hit submit on the iPad app, the following information is submitted or created as a new entry.
 
