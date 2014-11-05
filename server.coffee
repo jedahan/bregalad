@@ -1,6 +1,6 @@
 config = require './config.json'
 port = process.env.PORT or 5000
-timeout = 90 # how many seconds before emailing from the queue
+timeout = 5 # how many seconds before emailing from the queue
 
 # koa, from the makers of express
 koa = require 'koa'
