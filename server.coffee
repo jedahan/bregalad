@@ -54,9 +54,9 @@ sendEmail = (participant) ->
   rendered = mustache.render template, participant
   image = yield readFile "#{composite_dir}/#{participant._id}.jpg"
   email =
-    "From": "you@exhibitgrowth.com"
+    "From": "faketest@exhibitgrowth.com"
     "To": participant.email
-    "Subject": "Umpqua Growth"
+    "Subject": "Your Exhibit:Growth Portrait"
     "ReplyTo": "exhibitgrowth@umpquabank.com"
     "TextBody": "Please email exhibitgrowth@umpquabank.com if you are interested in being contacted by a specialist"
     "HtmlBody": rendered
