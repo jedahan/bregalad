@@ -51,7 +51,8 @@ postmark_send = thunkify postmark.send
 
 sendEmail = (participant) ->
   yield participants.update {_id: participant._id}, $set: delivered: true
-  console.log "[#{participant._id}] emailing #{participant.first_name} #{participant.last_name} (#{participant.email})"
+  person = "#{participant.first_name} #{participant.last_name} (#{participant.email})"
+  console.log "[#{participant._id}] Emailing #{person}"
   rendered = mustache.render template, participant
   image = yield readFile "#{composite_dir}/#{participant._id}.jpg"
   email =
@@ -82,18 +83,18 @@ sendEmail = (participant) ->
       try
         sent = yield postmark_send email
         if sent?.Message is 'OK'
-          console.log "email sent to #{participant.email} [#{participant._id}]"
+          console.log "[#{participant._id}] Emailed #{person}"
       catch error
         if error.status is 422
           yield participants.remove _id: participant._id
           console.error
-          console.error "[#{participant._id}] Removing due to postmark error:"
+          console.error "[#{participant._id}] Removed #{person} due to postmark error:"
           console.error error
           console.error
         else
           yield participants.update {_id: participant._id}, $set: delivered: false
           console.error
-          console.error "[#{participant._id}] Delivery to #{participant.email} failed due to error:"
+          console.error "[#{participant._id}] Delivery to #{person} failed, due to error:"
           console.error error
           console.error
 
