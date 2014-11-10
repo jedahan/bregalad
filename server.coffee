@@ -161,7 +161,7 @@ app.get '/participants.json', ->
 # GET /participants.csv
 app.get '/participants.csv', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: (+ @query?.end or (new Date).getTime())
-  @body = yield json2csv data: yield participants.find(options)
+  @body = yield json2csv(data: yield participants.find(options))
 
 app.get /.*/, ->
   yield send @, @path, { root: static_dir }
