@@ -28,6 +28,7 @@ composite_dir = static_dir + '/composites'
 nedb = require 'nedb'
 wrap = require 'co-nedb'
 db = new nedb filename: 'participants.db', autoload: true
+db.persistence.setAutocompactionInterval(timeout * 1000)
 participants = wrap db
 co = require 'co'
 util = require 'util'
