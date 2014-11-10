@@ -1,6 +1,6 @@
 config = require './config.json'
 port = process.env.PORT or 5000
-timeout = 5 # how many seconds before emailing from the queue
+timeout = 10 # how many seconds before emailing from the queue
 
 # koa, from the makers of express
 koa = require 'koa'
@@ -49,8 +49,8 @@ styliner.processHTML(source).then((html) -> template = html)
 postmark_send = thunkify postmark.send
 
 sendEmail = (participant) ->
-  console.log "emailing #{participant.first_name} #{participant.last_name} (#{participant.email}) [#{participant._id}]"
   yield participants.update {_id: participant._id}, $set: delivered: true
+  console.log "[#{participant._id}] emailing #{participant.first_name} #{participant.last_name} (#{participant.email})"
   rendered = mustache.render template, participant
   image = yield readFile "#{composite_dir}/#{participant._id}.jpg"
   email =
@@ -165,8 +165,8 @@ app.get /.*/, ->
   yield send @, @path, { root: static_dir }
 
 app.listen port, ->
-  #co( -> console.log yield participants.find({}) )()
   console.log "[#{process.pid}] listening on :#{port}"
+  console.log
   console.log "curl localhost:#{port}/participant \
                 --form image=@profile.jpg \
                 --form email=jonathan.d@fakelove.tv \
@@ -176,11 +176,11 @@ app.listen port, ->
                 --form timedout=false \
                 --form zip=11201 \
                 "
-  # Every 15 seconds, try and send
+  # Every **timeout** seconds, try and send a single email
   setInterval ( ->
     co( ->
-      for participant in yield participants.find({delivered: false})
-        yield sendEmail participant
+      participant = yield participants.findOne({delivered: false})
+      yield sendEmail participant
     )()
   ), timeout*1000
 
