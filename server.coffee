@@ -83,13 +83,18 @@ sendEmail = (participant) ->
         if sent?.Message is 'OK'
           console.log "email sent to #{participant.email} [#{participant._id}]"
       catch error
-        console.error error
         if error.status is 422
           yield participants.remove _id: participant._id
-          console.error "removing [#{participant._id}]:"
+          console.error
+          console.error "[#{participant._id}] Removing due to postmark error:"
+          console.error error
+          console.error
         else
           yield participants.update {_id: participant._id}, $set: delivered: false
-          console.error "email sending failed to #{participant.email} [#{participant._id}]"
+          console.error
+          console.error "[#{participant._id}] Delivery to #{participant.email} failed due to error:"
+          console.error error
+          console.error
 
 # choose our middleware here
 app = koa()
