@@ -180,7 +180,7 @@ app.listen port, ->
   setInterval ( ->
     co( ->
       participant = yield participants.findOne({delivered: false})
-      yield sendEmail participant
+      yield sendEmail participant if participant?
     )()
   ), timeout*1000
 
