@@ -150,18 +150,22 @@ app.post '/participant', body({multipart: true, formidable: {uploadDir: composit
 
 # GET /participants
 app.get '/participants', ->
-  options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
+  options = timestamp: $gte: (+ @query?.start or 0), $lte: (+ @query?.end or (new Date).getTime())
   @body = mustache.render table_template, participants: yield participants.find(options)
 
 # GET /participants.json
 app.get '/participants.json', ->
-  options = timestamp: $gte: (+ @query?.start or 0), $lte: +(@query?.end or (new Date).getTime())
+  options = timestamp: $gte: (+ @query?.start or 0), $lte: (+ @query?.end or (new Date).getTime())
   @body = yield participants.find(options)
 
 # GET /participants.csv
 app.get '/participants.csv', ->
   options = timestamp: $gte: (+ @query?.start or 0), $lte: (+ @query?.end or (new Date).getTime())
-  @body = yield json2csv(data: yield participants.find(options))
+  data = yield participants.find options
+  if data.length is 0
+    @body = @throw 404, 'No results found'
+  else
+    @body = yield json2csv {data}
 
 app.get /.*/, ->
   yield send @, @path, { root: static_dir }
