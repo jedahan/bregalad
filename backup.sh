@@ -2,8 +2,11 @@
 NOW=$(date +%Y-%m-%d_%H:%M:%S)
 
 pushd backup
-TODAY_START=$(date --date="$(date +%Y-%m-%d)" +%s)
-TODAY_END=$(( $TODAY_START + 86400 ))
+TODAY_START=$(gdate --date="$(date +%Y-%m-%d)" +%s%3N)
+TODAY_END=$(( $TODAY_START + 86400 *1000 ))
+
+echo $TODAY_START
+echo $TODAY_END
 
 curl --silent localhost:5000/participants.csv?start=${TODAY_START}\&end=${TODAY_END} > ${NOW}.csv
 curl --silent localhost:5000/participants.csv > participants.csv
