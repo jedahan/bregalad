@@ -7,3 +7,4 @@ config.sh
 config.json
 static/*
 static/.gitkeep
+.DS_Store
