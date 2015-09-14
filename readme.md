@@ -1,12 +1,23 @@
 # Bregalad, a backend that helps transform people into Ents
 
+## Installation
+
+  `npm install` to install all the dependencies.
+  `cp config.json.template && edit config.json`, fill it in with your postmark api key,
+  an array of postmark template ids, and an optional object of zip codes to map to
+  branch addresses.
+
 ## Testing
 
-  Once the server is up and running, if you want to test a new email try this command:
+  Start the server with `npm start`. To test creating a new email, try this command:
 
-    curl -i http://localhost:5000/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timedout=false --form email=jonathan.d@fakelove.tv
+    curl -i http://localhost:5000/participant --form image=@profile.jpg --form interested=true --form first_name=Bobby --form last_name=Tables --form zip=11201 --form timedout=false --form email=whoever@fakelove.tv
 
-  You should get an email, with an inline image from stuff@fakelove.tv within minutes. Make sure you have config.json filled out.
+  You should get an email, with an inline image from stuff@fakelove.tv within minutes.
+
+## Templates
+
+  We are using postmark templates - login to edit them.
 
 ### The database
 
@@ -15,6 +26,7 @@
   There is also a backup script, called **backup.sh**. If you want to use this to upload the files to a sftp server, copy **config.sh.template** to **config.sh** and fill in the appropriate variables - `USER`, `HOST`, and `IDENTITY`.
 
 ## Endpoints
+
 
 ### Post a new tree
 
@@ -30,10 +42,16 @@ This endpoint is accessed by the iPad app. It returns the "num" most recently cr
 
 If accept-type is application/html, render a paginated gallery of 25 images at a time.
 
+### Get templates
+
+    GET /templates
+
+This will return an array of templates, with associated name and ids. Useful for sending emails.
+
 ### Send an email with the chosen treeface
 
     POST /participant
-    
+
       first_name: string
       last_name: string
       email: string
@@ -41,8 +59,9 @@ If accept-type is application/html, render a paginated gallery of 25 images at a
       interested: boolean
       timedout: boolean
       image: base64 image
+      templateId: number (optional, defaults to random)
 
-When the user has hit submit on the iPad app, the following information is submitted or created as a new entry.
+When the user has hit submit on the iPad app, the following information is submitted or created as a new entry. There is an optional templateId. If it is not specified, a random template from the list of postmark templates will be sent. You can get an array of templates and thier Ids from the /templates endpoint.
 
 ### Get participants
 
@@ -60,7 +79,7 @@ You can view all the participants as .json, .csv, or html (no extention). You ca
   * **_id** the id of the participant/composite image
 
 ## Installation and Deployment
- 
+
 The API requires [node.js](http://nodejs.org) v0.11.x, [coffeescript](http://github.com/jashkenas/coffeescript) trunk, and is built on the [koa](koajs.com) web framework.
 
 The recommended setup is to use [nvm](https://github.com/creationix/nvm) to handle installing and using the correct version of node when doing `npm install` and `npm start`.

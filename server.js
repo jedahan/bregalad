@@ -36,22 +36,30 @@ var mustache = require('mustache')
 var table_template = nodefs.readFileSync('template/table.html', 'utf8')
 
 // email
-var postmark = require('postmark')(config.postmark_key)
+var postmark = require('postmark')(config.postmark.key)
+const defaultTemplate = config.postmark.defaultTemplateId
+var templates;
 
 var sendEmail = function*(participant) {
   yield participants.update({ _id: participant._id }, { $set: { delivered: true } })
   const first = participant.first_name
   const last = participant.last_name
+  const templateId = participant.templateId
+  const zip = participant.zip
+  const address = config.zips[`${zip}`]
   var _id = participant._id
   const person = `${first} ${last} (${participant.email})`
   console.log(`[${_id}] Emailing ${person}`)
   const image = yield fs.readFile(`${composite_dir}/${_id}.jpg`)
+  var model = {"first_name": first}
+  if(address) { model["address"] = address }
+
   var email = {
     "To": participant.email,
     "From": "faketest@exhibitgrowth.com",
     "ReplyTo": "exhibitgrowth@umpquabank.com",
-    "TemplateId": 65624,
-    "TemplateModel": { "first_name": first },
+    "TemplateId": templateId,
+    "TemplateModel": model,
     "Attachments": [{
         "Content": image.toString('base64'),
         "Name": "profile.jpg",
@@ -124,9 +132,16 @@ router.get('/trees', function*() {
   return this.body = trees.reverse().slice(+offset, +offset + +num);
 });
 
+// GET /templates
+router.get('/templates', function*() {
+  return this.body = templates
+})
+
+
 // POST /participant
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
   let participant = this.request.body.fields
+  participant.templateId = JSON.parse(participant.templateId) || templates[Math.floor(Math.random()*templates.length)]
   participant.delivered = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
@@ -169,6 +184,11 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
+postmark.getTemplates(function(err, response) {
+  if(err){ console.error(err)
+  } else { templates = response.Templates }
+})
+
 app.listen(port, () => {
   console.log(`[${process.pid}] listening on :${port}`);
   console.log()
@@ -179,6 +199,7 @@ app.listen(port, () => {
 --form last_name=Dahan \
 --form interested=true \
 --form timedout=false \
+--form template=0 \
 --form zip=11201`);
   defer.setInterval( function*(){
     yield sendEmail(yield participants.findOne({ delivered: false }).exec())

@@ -1,3 +1,8 @@
 {
-  "postmark_key": "place your postmark api key here"
+  "postmark": {
+    "key": "place your postmark api key here"
+  },
+  "zips": {
+    "11212": "Address line 1\n line 2\n line 3\n line 4"
+  }
 }
