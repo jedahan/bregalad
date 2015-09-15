@@ -132,9 +132,9 @@ router.post('/tree', body({ multipart: true, formidable: { uploadDir: tree_dir }
 // GET /trees
 router.get('/trees', function*() {
   const trees = (yield fs.readdir(tree_dir)).filter( (x) => /jpg$/.test(x) )
-  const num = this.query.num || '4'
-  const offset = this.query.offset || '0'
-  return this.body = trees.reverse().slice(+offset, +offset + +num);
+  const num = parseInt(this.query.num || 4)
+  const offset = parseInt(this.query.offset || 0)
+  return this.body = trees.reverse().slice(offset, offset + num);
 });
 
 // GET /templates
