@@ -34,6 +34,7 @@ var util = require('util')
 var json2csv = co.wrap(require('json2csv'))
 var mustache = require('mustache')
 var table_template = nodefs.readFileSync('template/table.html', 'utf8')
+var zipcodes = require('zipcodes')
 
 // email
 var postmark = require('postmark')(config.postmark.key)
@@ -46,7 +47,14 @@ var sendEmail = function*(participant) {
   const last = participant.last_name
   const templateId = participant.templateId
   const zip = participant.zip
-  const address = config.zips[`${zip}`]
+  let address = config.zips[`${zip}`]
+
+  if(!address) {
+    const distances = config.zips.map((_zip) => zipcodes.distance(zip,_zip))
+    const min_index = distances.indexOf(Math.min.apply(Math, distances))
+    if(min_index != -1){ address = config.zips[min_index] }
+  }
+
   var _id = participant._id
   const person = `${first} ${last} (${participant.email})`
   console.log(`[${_id}] Emailing ${person}`)
