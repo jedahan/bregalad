@@ -100,7 +100,7 @@ var sendEmail = function*(participant) {
         participants.update({ _id }, { $set: { delivered: false }})
         console.error(`[${_id}] Delivery to ${person} failed due to error:`)
       }
-      console.error(error.message)
+      console.error(util.inspect(error))
     }
 
   })
