@@ -144,18 +144,17 @@ router.get('/templates', function*() {
 
 // POST /participant
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
+  console.log(util.inspect(this.request.body.fields))
   let participant = this.request.body.fields
-  if(participant.templateId) {
-    participant.templateId = + participant.templateId
-  } else {
-    participant.templateId = templates[Math.floor(Math.random()*templates.length)]
-  }
+  participant.templateId |= templates[Math.floor(Math.random()*templates.length)].TemplateId
+  participant.templateId = parseInt(participant.templateId)
   participant.delivered = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
-  participant.zip = +participant.zip
+  participant.zip |= 90210
+  participant.zip = parseInt(participant.zip)
   participant.date = new Date
-  participant.timestamp = +participant.date.getTime()
+  participant.timestamp = parseInt(participant.date.getTime())
   participant = yield participants.insert(participant)
   let path = this.request.body.files.image.path
   let new_path = path.replace(/[^\/]*$/, `${participant._id}.jpg`)
