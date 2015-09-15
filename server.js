@@ -125,7 +125,7 @@ router.post('/tree', body({ multipart: true, formidable: { uploadDir: tree_dir }
 
 // GET /trees
 router.get('/trees', function*() {
-  const trees = (yield dir(tree_dir))
+  const trees = (yield fs.readdir(tree_dir))
   const num = this.query.num || '4'
   const offset = this.query.offset || '0'
   trees = trees.filter( (x) => /jpg$/.test(x) )
