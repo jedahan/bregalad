@@ -28,7 +28,6 @@ var db = new nedb({ filename: 'participants.db', autoload: true })
 db.persistence.setAutocompactionInterval(timeout * 1000)
 var participants = wrap(db)
 var co = require('co')
-var util = require('util')
 
 // csv stuff
 var json2csv = co.wrap(require('json2csv'))
