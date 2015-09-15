@@ -92,12 +92,11 @@ var sendEmail = function*(participant) {
         console.log(`[${_id}] Emailed ${person}`)
       }
     } else {
-      console.error()
       if(error.status === 422) {
         participants.remove({ _id }).exec()
         console.error(`[${_id}] Removed ${person} due to postmark error:`)
       } else {
-        participants.update({ _id }, { $set: { delivered: false }})
+        participants.update({ _id }, { $set: { delivered: false }}).exec()
         console.error(`[${_id}] Delivery to ${person} failed due to error:`)
       }
       console.error(util.inspect(error))
