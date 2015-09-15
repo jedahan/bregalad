@@ -48,11 +48,11 @@ var sendEmail = function*(participant) {
   const templateId = participant.templateId
   const zip = participant.zip
   let address = config.zips[`${zip}`]
-
-  if(!address) {
-    const distances = config.zips.map((_zip) => zipcodes.distance(zip,_zip))
+  if(address == null) {
+    const zips = Object.keys(config.zips)
+    const distances = zips.map((_zip) => zipcodes.distance(zip, _zip))
     const min_index = distances.indexOf(Math.min.apply(Math, distances))
-    if(min_index != -1){ address = config.zips[min_index] }
+    if(min_index != -1){ address = config.zips[zips[min_index]] }
   }
 
   var _id = participant._id
