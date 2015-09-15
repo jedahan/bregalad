@@ -145,7 +145,6 @@ router.get('/templates', function*() {
   return this.body = templates
 })
 
-
 // POST /participant
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
   let participant = this.request.body.fields
