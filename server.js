@@ -37,7 +37,6 @@ var zipcodes = require('zipcodes')
 
 // email
 var postmark = require('postmark')(config.postmark.key)
-const defaultTemplate = config.postmark.defaultTemplateId
 var templates;
 
 var sendEmail = function*(participant) {
