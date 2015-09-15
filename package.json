@@ -5,9 +5,7 @@
   "contributors": [
     "Jonathan Dahan"
   ],
-  "licenses": [
-    "ISC"
-  ],
+  "license": "ISC",
   "version": "0.0.3",
   "description": "backend image/email services",
   "author": "Jonathan Dahan <hi@jonathan.is>",
