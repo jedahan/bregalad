@@ -149,6 +149,11 @@ router.get('/templates', function*() {
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
   let participant = this.request.body.fields
   participant.templateId = JSON.parse(participant.templateId) || templates[Math.floor(Math.random()*templates.length)]
+  if(participant.templateId) {
+    participant.templateId = + participant.templateId
+  } else {
+    participant.templateId = templates[Math.floor(Math.random()*templates.length)]
+  }
   participant.delivered = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
