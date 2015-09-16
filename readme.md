@@ -6,6 +6,10 @@
   `cp config.json.template && edit config.json`, fill it in with your postmark api key,
   each postmark email template ids, and zip codes that map to address arrays. If your template has image attachments, make sure to have the correct folder in `templates/images/{templateId}` for each template.
 
+## Production
+
+  Run `npm run-script production` and if the server ever crashes it will be restarted.
+
 ## Testing
 
   Start the server with `npm start`. To test creating a new email, try this command:
