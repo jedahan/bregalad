@@ -39,6 +39,32 @@ var zipcodes = require('zipcodes')
 var postmark = require('postmark')(config.postmark.key)
 var templates;
 
+var sendManagerEmail = function*(participant) {
+  var email = {
+    "To": participant.email,
+    "From": "faketest@exhibitgrowth.com",
+    "ReplyTo": "exhibitgrowth@umpquabank.com",
+    "TemplateId": config.postmark.branchTemplateId,
+    "TemplateModel": model,
+    "Attachments": [{
+        "Content": image.toString('base64'),
+        "Name": `${zip}.jpg`,
+        "ContentType": "image/jpeg",
+        "ContentID": "cid:manager.jpg"
+      }]
+  };
+
+  for (let image of (yield fs.readdir("template/images"))) {
+    email["Attachments"].push({
+      "Content": nodefs.readFileSync(`template/images/${image}`).toString('base64'),
+      "Name": image,
+      "ContentType": "image/png",
+      "ContentID": "cid:" + image
+    });
+  }
+
+}
+
 var sendEmail = function*(participant) {
   yield participants.update({ _id: participant._id }, { $set: { delivered: true } })
   const first = participant.first_name
@@ -64,7 +90,7 @@ var sendEmail = function*(participant) {
     "To": participant.email,
     "From": "faketest@exhibitgrowth.com",
     "ReplyTo": "exhibitgrowth@umpquabank.com",
-    "TemplateId": templateId,
+    "TemplateId": config.postmark.portraitTemplateId,
     "TemplateModel": model,
     "Attachments": [{
         "Content": image.toString('base64'),
@@ -82,6 +108,8 @@ var sendEmail = function*(participant) {
       "ContentID": "cid:" + image
     });
   }
+
+  if(interested){ sendManagerEmail(participant) }
 
   postmark.sendEmailWithTemplate(email, (error, result) => {
     if(!error) {
@@ -144,8 +172,6 @@ router.get('/templates', function*() {
 // POST /participant
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
   let participant = this.request.body.fields
-  participant.templateId |= templates[Math.floor(Math.random()*templates.length)].TemplateId
-  participant.templateId = parseInt(participant.templateId)
   participant.delivered = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
