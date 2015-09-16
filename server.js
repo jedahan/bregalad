@@ -32,7 +32,7 @@ var co = require('co')
 // csv stuff
 var json2csv = co.wrap(require('json2csv'))
 var mustache = require('mustache')
-var table_template = nodefs.readFileSync('template/table.html', 'utf8')
+var table_template = nodefs.readFileSync('templates/table.html', 'utf8')
 var zipcodes = require('zipcodes')
 
 // email
@@ -40,6 +40,7 @@ var postmark = require('postmark')(config.postmark.key)
 var templates;
 
 var sendManagerEmail = function*(participant) {
+  const templateId = config.postmark.branchTemplateId
   const first = participant.first_name
   const zip = participant.zip
   let address = config.zips[`${zip}`]
@@ -56,14 +57,14 @@ var sendManagerEmail = function*(participant) {
     "To": participant.email,
     "From": "faketest@exhibitgrowth.com",
     "ReplyTo": "exhibitgrowth@umpquabank.com",
-    "TemplateId": config.postmark.branchTemplateId,
+    "TemplateId": templateId,
     "TemplateModel": model,
     "Attachments": []
   };
 
-  for (let image of (yield fs.readdir("template/images"))) {
+  for (let image of (yield fs.readdir(`templates/images/${templateId}`))) {
     email["Attachments"].push({
-      "Content": nodefs.readFileSync(`template/images/${image}`).toString('base64'),
+      "Content": nodefs.readFileSync(`template/images/${templateId}/${image}`).toString('base64'),
       "Name": image,
       "ContentType": "image/png",
       "ContentID": "cid:" + image
@@ -73,6 +74,8 @@ var sendManagerEmail = function*(participant) {
 }
 
 var sendEmail = function*(participant) {
+  if(interested){ sendManagerEmail(participant) }
+  const templateId = config.postmark.portraitTemplateId
   yield participants.update({ _id: participant._id }, { $set: { delivered: true } })
   const first = participant.first_name
   const last = participant.last_name
@@ -87,7 +90,7 @@ var sendEmail = function*(participant) {
     "To": participant.email,
     "From": "faketest@exhibitgrowth.com",
     "ReplyTo": "exhibitgrowth@umpquabank.com",
-    "TemplateId": config.postmark.portraitTemplateId,
+    "TemplateId": templateId,
     "TemplateModel": model,
     "Attachments": [{
         "Content": image.toString('base64'),
@@ -97,16 +100,14 @@ var sendEmail = function*(participant) {
       }]
   };
 
-  for (let image of (yield fs.readdir("template/images"))) {
+  for (let image of (yield fs.readdir(`templates/images/${templateId}`))) {
     email["Attachments"].push({
-      "Content": nodefs.readFileSync(`template/images/${image}`).toString('base64'),
+      "Content": nodefs.readFileSync(`template/images/${templateId}/${image}`).toString('base64'),
       "Name": image,
       "ContentType": "image/png",
       "ContentID": "cid:" + image
     });
   }
-
-  if(interested){ sendManagerEmail(participant) }
 
   postmark.sendEmailWithTemplate(email, (error, result) => {
     if(!error) {
