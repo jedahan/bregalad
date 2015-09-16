@@ -1,8 +1,13 @@
 {
   "postmark": {
-    "key": "place your postmark api key here"
+    "key": "some-api-key-here-warrgarbl",
+    "templateIds": {
+      "portrait": 12345,
+      "branch": 73737
+    }
   },
   "zips": {
-    "11212": "Address line 1\n line 2\n line 3\n line 4"
+    "90210": ["One String", "For Each Line", "Of The Address"],
+    "98004": ["Bellevue 4th St.", "10885 NE 4th St", "Suite 100", "Bellevue, WA", "425-256-6550"]
   }
 }
