@@ -39,8 +39,47 @@ var zipcodes = require('zipcodes')
 var postmark = require('postmark')(config.postmark.key)
 var templates;
 
-var sendManagerEmail = function*(participant) {
-  const templateId = config.postmark.branchTemplateId
+var sendEmailWithTemplate = function*(_id, email, templateId) {
+  console.log(`[${_id}/${templateId}] Emailing ${email.TemplateModel.first_name} (${email.To})`)
+
+  if (templateId === config.postmark.templateIds.portrait){
+      yield participants.update({ _id }, {$set: {delivered: true}})
+  } else {
+      yield participants.update({ _id }, {$set: {deliveredInterested: true}})
+  }
+  const images = (yield fs.readdir(`templates/images/${templateId}`)).filter( (x) => /jpg$/.test(x) )
+  for (let image of images) {
+    email["Attachments"].push({
+      "Content": nodefs.readFileSync(`template/images/${templateId}/${image}`).toString('base64'),
+      "Name": image,
+      "ContentType": "image/png",
+      "ContentID": "cid:" + image
+    });
+  }
+  postmark.sendEmailWithTemplate(email, function*(error, result) {
+    if(!error) {
+      if (result.message === 'OK') {
+        console.log(`[${_id}] Emailed ${person}`)
+      }
+    } else {
+      if(error.status === 422) {
+        participants.remove({ _id }).exec()
+        console.error(`[${_id}] Removed ${person} due to postmark error:`)
+      } else {
+        if (templateId === config.postmark.templateIds.portrait){
+            (yield participants.update({ _id }, { $set: {delivered: false }}))
+        } else {
+            (yield participants.update({ _id }, { $set: {deliveredInterested: false }}))
+        }
+        console.error(`[${_id}] Delivery to ${person} failed due to error:`)
+      }
+      console.error(util.inspect(error))
+    }
+  })
+}
+
+var sendInterestedEmail = function*(participant) {
+  const templateId = config.postmark.templateIds.branch
   const first = participant.first_name
   const zip = participant.zip
   let address = config.zips[`${zip}`]
@@ -61,28 +100,15 @@ var sendManagerEmail = function*(participant) {
     "TemplateModel": model,
     "Attachments": []
   };
-
-  for (let image of (yield fs.readdir(`templates/images/${templateId}`))) {
-    email["Attachments"].push({
-      "Content": nodefs.readFileSync(`template/images/${templateId}/${image}`).toString('base64'),
-      "Name": image,
-      "ContentType": "image/png",
-      "ContentID": "cid:" + image
-    });
-  }
-
+  yield sendEmailWithTemplate(participant._id, email, templateId)
 }
 
 var sendEmail = function*(participant) {
-  if(interested){ sendManagerEmail(participant) }
-  const templateId = config.postmark.portraitTemplateId
-  yield participants.update({ _id: participant._id }, { $set: { delivered: true } })
+  const templateId = config.postmark.templateIds.portrait
   const first = participant.first_name
   const last = participant.last_name
 
   var _id = participant._id
-  const person = `${first} ${last} (${participant.email})`
-  console.log(`[${_id}] Emailing ${person}`)
   const image = yield fs.readFile(`${composite_dir}/${_id}.jpg`)
   var model = {"first_name": first}
 
@@ -99,34 +125,7 @@ var sendEmail = function*(participant) {
         "ContentID": "cid:profile.jpg"
       }]
   };
-
-  for (let image of (yield fs.readdir(`templates/images/${templateId}`))) {
-    email["Attachments"].push({
-      "Content": nodefs.readFileSync(`template/images/${templateId}/${image}`).toString('base64'),
-      "Name": image,
-      "ContentType": "image/png",
-      "ContentID": "cid:" + image
-    });
-  }
-
-  postmark.sendEmailWithTemplate(email, (error, result) => {
-    if(!error) {
-      if (result.message === 'OK') {
-        participants.update({ _id }, { $set: { delivered: true }})
-        console.log(`[${_id}] Emailed ${person}`)
-      }
-    } else {
-      if(error.status === 422) {
-        participants.remove({ _id }).exec()
-        console.error(`[${_id}] Removed ${person} due to postmark error:`)
-      } else {
-        participants.update({ _id }, { $set: { delivered: false }})
-        console.error(`[${_id}] Delivery to ${person} failed due to error:`)
-      }
-      console.error(util.inspect(error))
-    }
-
-  })
+  yield sendEmailWithTemplate(participant._id, email, templateId)
 };
 
 // POST /tree image=@tree.jpg timestamp=$(date +%s)
@@ -171,6 +170,7 @@ router.get('/templates', function*() {
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {
   let participant = this.request.body.fields
   participant.delivered = false
+  participant.deliveredInterested = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
   participant.copy = parseInt(participant.copy_option)
@@ -236,5 +236,6 @@ app.listen(port, () => {
 --form zip=11201`);
   defer.setInterval( function*(){
     yield sendEmail(yield participants.findOne({ delivered: false }).exec())
-  },1000);
+    yield sendInterestedEmail(yield participants.findOne({ interested: true, deliveredInterested: false }).exec())
+  },5000);
 })
