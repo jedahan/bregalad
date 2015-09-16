@@ -40,18 +40,25 @@ var postmark = require('postmark')(config.postmark.key)
 var templates;
 
 var sendManagerEmail = function*(participant) {
+  const first = participant.first_name
+  const zip = participant.zip
+  let address = config.zips[`${zip}`]
+  if(address == null) {
+    const zips = Object.keys(config.zips)
+    const distances = zips.map((_zip) => zipcodes.distance(zip, _zip))
+    const min_index = distances.indexOf(Math.min.apply(Math, distances))
+    if(min_index != -1){ address = config.zips[zips[min_index]] }
+  }
+  var model = {"first_name": first}
+  if(address) { model["address"] = address }
+
   var email = {
     "To": participant.email,
     "From": "faketest@exhibitgrowth.com",
     "ReplyTo": "exhibitgrowth@umpquabank.com",
     "TemplateId": config.postmark.branchTemplateId,
     "TemplateModel": model,
-    "Attachments": [{
-        "Content": image.toString('base64'),
-        "Name": `${zip}.jpg`,
-        "ContentType": "image/jpeg",
-        "ContentID": "cid:manager.jpg"
-      }]
+    "Attachments": []
   };
 
   for (let image of (yield fs.readdir("template/images"))) {
@@ -69,22 +76,12 @@ var sendEmail = function*(participant) {
   yield participants.update({ _id: participant._id }, { $set: { delivered: true } })
   const first = participant.first_name
   const last = participant.last_name
-  const templateId = participant.templateId
-  const zip = participant.zip
-  let address = config.zips[`${zip}`]
-  if(address == null) {
-    const zips = Object.keys(config.zips)
-    const distances = zips.map((_zip) => zipcodes.distance(zip, _zip))
-    const min_index = distances.indexOf(Math.min.apply(Math, distances))
-    if(min_index != -1){ address = config.zips[zips[min_index]] }
-  }
 
   var _id = participant._id
   const person = `${first} ${last} (${participant.email})`
   console.log(`[${_id}] Emailing ${person}`)
   const image = yield fs.readFile(`${composite_dir}/${_id}.jpg`)
   var model = {"first_name": first}
-  if(address) { model["address"] = address }
 
   var email = {
     "To": participant.email,
