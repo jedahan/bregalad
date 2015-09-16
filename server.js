@@ -149,8 +149,10 @@ router.post('/participant', body({ multipart: true, formidable: { uploadDir: com
   participant.delivered = false
   participant.interested = JSON.parse(participant.interested)
   participant.timedout = JSON.parse(participant.timedout)
+  participant.copy = parseInt(participant.copy_option)
   participant.zip |= 90210
   participant.zip = parseInt(participant.zip)
+  participant.phone = participant.phone
   participant.date = new Date
   participant.timestamp = parseInt(participant.date.getTime())
   participant = yield participants.insert(participant)
@@ -205,6 +207,8 @@ app.listen(port, () => {
 --form interested=true \
 --form timedout=false \
 --form template=0 \
+--form copy_option=0 \
+--form phone=555-8675309 \
 --form zip=11201`);
   defer.setInterval( function*(){
     yield sendEmail(yield participants.findOne({ delivered: false }).exec())
