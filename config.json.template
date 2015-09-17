@@ -1,13 +1,11 @@
 {
   "postmark": {
     "key": "some-api-key-here-warrgarbl",
-    "templateIds": {
-      "portrait": 12345,
-      "branch": 73737
-    }
+    "templateId": 12345
   },
+  "default_address": ["Bellevue 4th St.", "10885 NE 4th St", "Suite 100", "Bellevue, WA", "425-256-6550"],
   "zips": {
     "90210": ["One String", "For Each Line", "Of The Address"],
-    "98004": ["Bellevue 4th St.", "10885 NE 4th St", "Suite 100", "Bellevue, WA", "425-256-6550"]
+    "98110": ["Bainbridge Island", "600 Winslow Way E.", "Suite 120", "Bainbridge Island, WA", "206-842-8676"]
   }
 }
