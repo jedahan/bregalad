@@ -106,20 +106,13 @@ router.post('/tree', body({ multipart: true, formidable: { uploadDir: tree_dir }
   const size = this.request.body.files.image.size
   const image_path = `${tree_dir}/${timestamp}.jpg`
 
-  const stat = yield fs.stat(image_path)
-  if(stat.err){
-    if (stat.size === info.size) {
-      this.status = 202
-      return this.body = `Image ${info.path} already exists, and is the same size.`
-    } else {
-      this.status = 409
-      return this.body = `Image ${info.path} already exists, and is a different size.`
-    }
+  if(yield fs.exists(image_path)){
+    return this.body = `Image ${info.path} already exists`
   } else {
     yield fs.rename(path, image_path)
     return this.body = {
       "message": "New tree uploaded!",
-      "url": `http://localhost:${port}/${image_path}`
+      "url": `:${port}${image_path.replace(__dirname,'')}`
     };
   }
 });
