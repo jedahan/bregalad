@@ -63,8 +63,8 @@ var sendEmail = function*(participant) {
 
   var email = {
     "To": participant.email,
-    "From": "faketest@exhibitgrowth.com",
-    "ReplyTo": "exhibitgrowth@umpquabank.com",
+    "From": config.postmark.emailFrom || "test@example.com",
+    "ReplyTo": config.postmark.emailReplyTo || "reply@example.com",
     "TemplateId": config.postmark.templateId,
     "TemplateModel": model,
     "Attachments": [{

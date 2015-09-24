@@ -1,7 +1,9 @@
 {
   "postmark": {
     "key": "some-api-key-here-warrgarbl",
-    "templateId": 12345
+    "templateId": 12345,
+    "emailFrom": "sample@example.com",
+    "emailReplyTo": "anotheraddress@example.org"
   },
   "default_address": ["Bellevue 4th St.", "10885 NE 4th St", "Suite 100", "Bellevue, WA", "425-256-6550"],
   "zips": {
