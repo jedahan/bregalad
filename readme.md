@@ -80,4 +80,12 @@ You can view all the participants as .json, .csv, or html (no extention). You ca
   * **interested** is "name" interested in being contacted by a representative (boolean)
   * **timedout** true if they walked away
   * **delivered** was this email successfully sent? (boolean)
-  * **_id** the id of the participant/composite image
+  * **\_id** the id of the participant/composite image
+
+### Get a report of the last day
+
+    POST /report
+
+      email: string
+
+Send a report of the current day activities to the specified address
