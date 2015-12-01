@@ -30,7 +30,7 @@ var participants = wrap(db)
 var co = require('co')
 
 // csv stuff
-var json2csv = co.wrap(require('json2csv'))
+var json2csv = require('bluebird').promisify(require('json2csv'))
 var mustache = require('mustache')
 var table_template = nodefs.readFileSync('template/index.html', 'utf8')
 var zipcodes = require('zipcodes')
@@ -155,7 +155,7 @@ router.get(/participants*/, function*() {
     if(/.json$/.test(this.path)){
       this.body = people
     } else if(/.csv$/.test(this.path)){
-      this.body = yield json2csv({ people })
+      this.body = yield json2csv({ data: people })
     } else {
       this.body = mustache.render(table_template, {people})
     }
