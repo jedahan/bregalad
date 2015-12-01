@@ -25,7 +25,7 @@
     "mustache": "^2.1.3",
     "nedb": "^1.1.4",
     "postmark": "^1.2.1",
-    "zipcodes": "^1.1.1"
+    "zipcodes": "^2.0.0"
   },
   "engines": {
     "node": "4",
