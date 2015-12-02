@@ -1,3 +1,4 @@
+'use strict'
 var config = require('./config.json')
 var port = process.env.PORT || 5000
 var timeout = 3
@@ -155,7 +156,7 @@ router.post('/report', body(), function*() {
     }
     return this.body = `Emailed {address}`
   })
-}
+})
 
 // POST /participant
 router.post('/participant', body({ multipart: true, formidable: { uploadDir: composite_dir } }), function*() {

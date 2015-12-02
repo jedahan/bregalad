@@ -6,26 +6,25 @@
         <string>com.umpqua.bregalad.server</string>
 
         <key>KeepAlive</key>
-        <dict>
-          <key>SuccessfulExit</key>
-          <false/>
+	<dict>
+		<key>SuccessfulExit</key>
+		<false/>
         </dict>
 
-        <key>ProgramArguments</key>
-        <array>
-                <string>npm</string>
-                <string>run-script</string>
-                <string>production</string>
-        </array>
-
-        <key>EnvironmentVariables</key>
-        <dict>
-          <key>PATH</key>
-          <string>/usr/local/bin/:$PATH</string>
-        </dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/Users/UmpquaServer/.nodebrew/current/bin:/usr/local/bin:$PATH</string>
+	</dict>
 
         <key>WorkingDirectory</key>
         <string>/Users/UmpquaServer/bregalad</string>
+
+        <key>ProgramArguments</key>
+        <array>
+                <string>/Users/UmpquaServer/bregalad/node_modules/.bin/forever</string>
+                <string>server.js</string>
+        </array>
 
         <key>RunAtLoad</key>
         <true/>

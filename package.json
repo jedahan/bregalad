@@ -32,8 +32,8 @@
     "npm": "2"
   },
   "scripts": {
-    "start": "node --use-strict server.js",
-    "production": "forever -c \"node --use-strict\" server.js"
+    "start": "node server.js",
+    "production": "forever server.js"
   },
   "repository": {
     "type": "git",
