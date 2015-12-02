@@ -1,10 +1,13 @@
 node_modules
 *db
+*err
 *log
+*out
 *swp
 *csv
 config.sh
 config.json
 static/*
 static/.gitkeep
+backup/*
 .DS_Store
