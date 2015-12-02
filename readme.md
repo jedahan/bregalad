@@ -6,8 +6,17 @@ The API requires [node.js](http://nodejs.org) v4, and is built on the [koa](koaj
 
 First, add your [postmark](postmarkapp.com) `api_key`, and `default_address` to **config.json**:
 
-    mv config.json{.template,}
-    edit config.json
+    mv config.json{.template,} && edit config.json
+
+Now configure daily email sending:
+
+    mv config.sh{.template,} && edit config.sh
+
+On OSX, I have provided plists for the server and backup to run on startup:
+
+    cp *.plist /Library/LaunchDaemons
+    launchctl load com.umpqua.bregalad.backup.plist
+    launchctl load com.umpqua.bregalad.plist
 
 Install dependencies with `npm install` and run with `npm start`. The intial database will be empty,
 but users can be added with the following command:
@@ -20,6 +29,8 @@ sent to test@example.com
 For production, if you want the server to restart on crash, try:
 
     npm run-script production
+
+On OSX, I recommend using the plist files for launchd as described above
 
 ## Database
 
