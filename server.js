@@ -133,12 +133,11 @@ router.post('/report', body(), function*() {
   const start = (new Date()).setHours(0,0,0,0)
   const end = (new Date()).setHours(24,0,0,0)
   const options = { timestamp: { $gte: start, $lte: end } }
-  console.log(options)
+
   let people = yield participants.find(options).exec()
   if(people.length){
     people = yield json2csv({ data: people })
   }
-  console.log(people.toString('base64'))
 
   var email = {
     "To": address,
