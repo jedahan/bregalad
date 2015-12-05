@@ -130,32 +130,35 @@ router.get('/trees', function*() {
 router.post('/report', body(), function*() {
   const address = this.request.body.fields.email
 
-  const start = new Date.setHours(0,0,0,0)
-  const end = new Date.setHours(0,0,0,0)
+  const start = (new Date()).setHours(0,0,0,0)
+  const end = (new Date()).setHours(24,0,0,0)
   const options = { timestamp: { $gte: start, $lte: end } }
+  console.log(options)
   let people = yield participants.find(options).exec()
-  people = yield json2csv({ data: people })
+  if(people.length){
+    people = yield json2csv({ data: people })
+  }
+  console.log(people.toString('base64'))
 
   var email = {
     "To": address,
     "From": config.postmark.emailFrom || "test@example.com",
     "ReplyTo": config.postmark.emailReplyTo || "reply@example.com",
     "Subject": "Daily report",
-    "Body": "Attached is the daily report for umpqua",
+    "HtmlBody": "Attached is the daily report for umpqua",
     "Attachments": [{
-        "Content": people.toString('base64'),
+        "Content": (new Buffer(people)).toString('base64'),
         "Name": "participants.csv",
         "ContentType": "text/csv"
       }]
   };
 
-  postmark.sendEmailWithTemplate(email, function(error, result) {
-    if(error) {
-      console.error(`Postmark error: {error}`)
-      return this.body = error
-    }
-    return this.body = `Emailed {address}`
+  postmark.sendEmail(email, (err, res) => {
+    console.log(err || res)
   })
+
+  this.body = "Report sent"
+  return this.body
 })
 
 // POST /participant

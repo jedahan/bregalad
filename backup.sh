@@ -1,4 +1,4 @@
-#!env bash
+#!/bin/bash
 NOW=$(date +%Y-%m-%d_%H:%M:%S)
 source config.sh
 
