@@ -1,4 +1,1 @@
-export USERNAME=secret_username
-export HOST=secret_hostname
-export IDENTITY=${HOME}/.ssh/secret_identity
-export BREGALAD_REPORT_EMAIL=something@somewhere.com
+export BREGALAD_REPORT_EMAILS=(something@somewhere.com another@email.com)
